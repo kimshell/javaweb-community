@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.MessageMapper">
+
+    <resultMap id="BASE_RESULT_MAP" type="io.javaweb.community.entity.MessageEntity">
+        <id column="messageId" property="messageId"/>
+        <result column="type" property="type"/>
+        <result column="postId" property="postId"/>
+        <result column="replyId" property="replyId"/>
+        <result column="isRead" property="isRead"/>
+        <result column="userId" property="userId"/>
+        <result column="atAnchor" property="atAnchor"/>
+        <result column="createDate" property="createDate"/>
+        <result column="modifyDate" property="modifyDate"/>
+        <result column="createUser" property="createUser"/>
+        <result column="status" property="status"/>
+        <result column="sorted" property="sorted"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <resultMap id="BASE_RESULT_MAP_01" type="io.javaweb.community.entity.dto.MessageDTO" extends="BASE_RESULT_MAP">
+        <association property="post" columnPrefix="post_" javaType="io.javaweb.community.entity.dto.PostDTO">
+            <id column="postId" property="postId"/>
+            <result column="title" property="title"/>
+            <result column="anonymous" property="anonymous"/>
+        </association>
+
+        <association property="reply" columnPrefix="reply_" javaType="io.javaweb.community.entity.dto.PostReplyDTO">
+            <id column="replyId" property="replyId"/>
+            <result column="page" property="page"/>
+            <result column="anonymous" property="anonymous"/>
+        </association>
+
+        <association property="author" columnPrefix="user_" javaType="io.javaweb.community.entity.UserEntity">
+            <id column="userId" property="userId"/>
+            <result column="name" property="name"/>
+            <result column="portrait" property="portrait"/>
+        </association>
+    </resultMap>
+
+	<!-- 根据用户id,检索其所有消息信息 -->
+	<select id="queryMessagesByUserId" parameterType="io.javaweb.community.entity.dto.MessageDTO" resultMap="BASE_RESULT_MAP_01">
+        SELECT
+            <include refid="io.javaweb.community.mapper.MessageMapper.BASE_FIELD">
+                <property name="alias" value="t"/>
+            </include>,
+
+            t1.`post_id` AS `post_postId`,
+            t1.`title` AS `post_title`,
+            t1.`anonymous` AS `post_anonymous`,
+
+            t2.`reply_id` AS `reply_replyId`,
+            t2.`page` AS `reply_page`,
+            t2.`anonymous` AS `reply_anonymous`,
+
+            t3.`user_id` AS `user_userId`,
+            t3.`name` AS `user_name`,
+            t3.`portrait` AS `user_portrait`
+        FROM
+            `jw_message` t
+            LEFT JOIN `jw_post` t1 ON t1.`post_id` = t.`post_id` -- AND t1.`status` = 'NORMAL'
+            LEFT JOIN `jw_post_reply` t2 ON t2.`reply_id` = t.`reply_id` -- AND t2.`status` = 'NORMAL'
+            LEFT JOIN `jw_user` t3 ON t3.`user_id` = t.`create_user`
+        <where>
+            <if test="modifyDate != null">AND t.`modify_date` = #{modifyDate}</if>
+            <if test="atAnchor != null">AND t.`at_anchor` = #{atAnchor}</if>
+            <if test="isRead != null">AND t.`is_read` = #{isRead}</if>
+            <if test="messageId != null">AND t.`message_id` = #{messageId}</if>
+            <if test="remark != null">AND t.`remark` = #{remark}</if>
+            <if test="postId != null">AND t.`post_id` = #{postId}</if>
+            <if test="type != null">AND t.`type` = #{type}</if>
+            <if test="userId != null">AND t.`user_id` = #{userId}</if>
+            <if test="sorted != null">AND t.`sorted` = #{sorted}</if>
+            <if test="replyId != null">AND t.`reply_id` = #{replyId}</if>
+            <if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+            <if test="createDate != null">AND t.`create_date` = #{createDate}</if>
+            <if test="status != null">AND t.`status` = #{status}</if>
+        </where>
+	</select>
+	
+	<!-- 根据用户id,检索其未读信息数量 -->
+	<select id="queryUnreadMessageCountByUserId" parameterType="java.io.Serializable" resultType="java.lang.Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			`jw_message` t
+        WHERE
+        	t.`is_read` = 0
+        AND
+        	t.`user_id` = #{userId}
+	</select>
+</mapper>

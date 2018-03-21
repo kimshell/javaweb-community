@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.UserSettingMapper">
+
+	<sql id="BASE_FIELD">
+		`${alias}`.`hide_post` AS `hidePost`,
+		`${alias}`.`sorted` AS `sorted`,
+		`${alias}`.`modify_date` AS `modifyDate`,
+		`${alias}`.`create_user` AS `createUser`,
+		`${alias}`.`remark` AS `remark`,
+		`${alias}`.`hide_reply` AS `hideReply`,
+		`${alias}`.`user_id` AS `userId`,
+		`${alias}`.`create_date` AS `createDate`,
+		`${alias}`.`status` AS `status`
+	</sql>
+	
+	<sql id="BASE_SELECT">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_user_setting` AS `t`
+		<where>
+			<if test="hidePost != null">AND t.`hide_post` = #{hidePost}</if>
+			<if test="sorted != null">AND t.`sorted` = #{sorted}</if>
+			<if test="modifyDate != null">AND t.`modify_date` = #{modifyDate}</if>
+			<if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+			<if test="remark != null">AND t.`remark` = #{remark}</if>
+			<if test="hideReply != null">AND t.`hide_reply` = #{hideReply}</if>
+			<if test="userId != null">AND t.`user_id` = #{userId}</if>
+			<if test="createDate != null">AND t.`create_date` = #{createDate}</if>
+			<if test="status != null">AND t.`status` = #{status}</if>
+		</where>	
+	</sql>
+	
+	<select id="queryByPrimaryKey" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.UserSettingEntity">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_user_setting` AS `t`
+		WHERE
+			t.`user_id` = #{userId}
+	</select>
+	
+	<select id="queryByParamSelective" parameterType="io.javaweb.community.entity.UserSettingEntity" resultType="io.javaweb.community.entity.UserSettingEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<select id="queryByParamSelectiveSole" parameterType="io.javaweb.community.entity.UserSettingEntity" resultType="io.javaweb.community.entity.UserSettingEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<insert id="create" parameterType="io.javaweb.community.entity.UserSettingEntity" >
+		INSERT INTO 
+			`jw_user_setting`
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="hidePost != null">`hide_post`,</if>
+			<if test="sorted != null">`sorted`,</if>
+			<if test="modifyDate != null">`modify_date`,</if>
+			<if test="createUser != null">`create_user`,</if>
+			<if test="remark != null">`remark`,</if>
+			<if test="hideReply != null">`hide_reply`,</if>
+			<if test="userId != null">`user_id`,</if>
+			<if test="createDate != null">`create_date`,</if>
+			<if test="status != null">`status`,</if>
+		</trim>
+		<trim prefix=" VALUES(" suffix=")" suffixOverrides=",">
+			<if test="hidePost != null">#{hidePost},</if>
+			<if test="sorted != null">#{sorted},</if>
+			<if test="modifyDate != null">#{modifyDate},</if>
+			<if test="createUser != null">#{createUser},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="hideReply != null">#{hideReply},</if>
+			<if test="userId != null">#{userId},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="status != null">#{status},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="io.javaweb.community.entity.UserSettingEntity">
+		UPDATE `jw_user_setting`
+		<set>
+			<if test="hidePost != null">`hide_post` = #{hidePost},</if>
+			<if test="sorted != null">`sorted` = #{sorted},</if>
+			<if test="modifyDate != null">`modify_date` = #{modifyDate},</if>
+			<if test="createUser != null">`create_user` = #{createUser},</if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="hideReply != null">`hide_reply` = #{hideReply},</if>
+			<if test="createDate != null">`create_date` = #{createDate},</if>
+			<if test="status != null">`status` = #{status},</if>
+		</set>
+		WHERE
+			`user_id` = #{userId}
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="io.javaweb.community.entity.UserSettingEntity">
+		UPDATE 
+			`jw_user_setting`
+		SET
+			`hide_post` = #{hidePost},
+			`sorted` = #{sorted},
+			`modify_date` = #{modifyDate},
+			`create_user` = #{createUser},
+			`remark` = #{remark},
+			`hide_reply` = #{hideReply},
+			`create_date` = #{createDate},
+			`status` = #{status}
+		WHERE
+			`user_id` = #{userId}
+	</update>
+	
+	<delete id="deleteByPrimaryKey"  parameterType="java.io.Serializable">
+		DELETE FROM `jw_user_setting` WHERE `user_id` = #{userId}
+	</delete>
+	
+	<delete id="deleteByParamSelective" parameterType="io.javaweb.community.entity.UserSettingEntity">
+		DELETE FROM `jw_user_setting`
+		<where>
+			<if test="hidePost != null">AND `hide_post` = #{hidePost}</if>
+			<if test="sorted != null">AND `sorted` = #{sorted}</if>
+			<if test="modifyDate != null">AND `modify_date` = #{modifyDate}</if>
+			<if test="createUser != null">AND `create_user` = #{createUser}</if>
+			<if test="remark != null">AND `remark` = #{remark}</if>
+			<if test="hideReply != null">AND `hide_reply` = #{hideReply}</if>
+			<if test="userId != null">AND `user_id` = #{userId}</if>
+			<if test="createDate != null">AND `create_date` = #{createDate}</if>
+			<if test="status != null">AND `status` = #{status}</if>
+		</where>
+	</delete>
+</mapper>

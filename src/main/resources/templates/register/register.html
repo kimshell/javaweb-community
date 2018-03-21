@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include('/common/common_header.html'){}  %>
+        <title>加入社区</title>
+    </head>
+    <body>
+		<% include('/common/common_body_header.html',{active:'register'}){} %>
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-4 col-md-offset-4">
+				
+					<div class="panel panel-default">
+				    	<div class="panel-body">
+				    		<form class="form-horizontal" role="form" id="login-form">
+								<input type="hidden" name="codeKey" id="codeKey"/>
+								<div class="form-group">
+									<label for="account" class="col-sm-3 control-label" style="text-align: left;">邮　　箱</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="account" name="email" placeholder="邮箱地址" >
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="name" class="col-sm-3 control-label" style="text-align: left;">名　　称</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="name" name="name" placeholder="怎么称呼你">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="password" class="col-sm-3 control-label" style="text-align: left;">密　　码</label>
+									<div class="col-sm-9">
+										<input type="password" class="form-control" id="password"  name="password" placeholder="登录密码">
+									</div>
+								</div>
+								
+								<div id="code-input" class="form-group hide">
+									<label for="code" class="col-sm-3 control-label" style="text-align: left;">人类验证</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" id="code" name="verifyCode" placeholder="验证码">
+									</div>
+									<img id="verifyCode" alt="" width="70px;" height="35px;" style="cursor: pointer;">
+								</div>
+							</form>
+							<div>
+								<button id="register-btn" class="btn btn-default btn-block">
+									<span class="glyphicon glyphicon-ok-circle"></span> 注册
+								</button>
+							</div>
+				    	</div>
+	    			</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		
+		<% include('/common/common_footer.html',{}){} %>
+    </body>
+	<% include('/common/common_script.html',{}){} %>
+    <script>
+    	
+    	$(function(){
+    		$('#register-btn').click(function(){
+    			
+    			if($(this).hasClass('disabled')){
+    				return;
+    			}
+    			
+    			register();
+    		});
+
+            // $(document).keyup(function (e) {
+            //     // var v = e.keyCode || e.which;
+            //     // console.log(v);
+            //     // if(v == 13){
+            //     //     register();
+            //     // }
+            // });
+
+            document.onkeydown=function(event) {
+                e = event ? event :(window.event ? window.event : null);
+                var currKey=0;
+                currKey=e.keyCode||e.which||e.charCode;
+                if(currKey==13){
+                    register();
+                }
+            };
+
+            function register() {
+                var formData = $('#login-form').serializeArray();
+
+                var email = formData[1]['value'];
+                var name = formData[2]['value'];
+                var password = formData[3]['value'];
+
+                if(!new RegExp("^[0-9a-zA-Z][-_0-9a-zA-Z\\.]{2,20}[0-9a-zA-Z]@([A-Za-z0-9][-A-Za-z0-9]+\\.)+[A-Za-z]{2,14}$").test(email)){
+                    layer.msg('该邮箱格式不支持');
+                    return;
+                }
+
+                if(!new RegExp("^[0-9a-zA-Z_\\u4e00-\\u9fa5]{2,14}$").test(name)){
+                    layer.msg('用户名格式不正确,2 - 14位,除了下划线外不能包含特殊字符');
+                    return;
+                }
+
+                if(!new RegExp("^[^\\u4e00-\\u9fa5\\s]{6,16}$").test(password)){
+                    layer.msg('密码格式不正确,不能有汉字或者空格 6 - 16位');
+                    return;
+                }
+
+                layer.load(2);
+
+                $(this).addClass('disabled');
+                $(this).text('注册中... ...')
+
+                $.ajax({
+                    url:'${ctxPath}/register',
+                    method:'POST',
+                    data:formData,
+                    success:function(response){
+                        if(response.success){
+                            window.location.href = '${ctxPath}/activation/send';
+                        }else{
+                            layer.closeAll();
+                            layer.msg(response.status == 'MISSING_VERIFY_CODE' ? '请输入验证码' : response.message);
+                            if(response.status == 'MISSING_VERIFY_CODE'){
+                                $('#code-input').removeClass('hide');
+                                $('#verifyCode').click();
+                            }else{
+                                if(!$('#code-input').hasClass('hide')){
+                                    $('#verifyCode').click();
+                                }
+                            }
+                            $('#register-btn').removeClass('disabled');
+                            $('#register-btn').text('注册');
+                        }
+                    },
+                    complete:function(){
+                        $('#codeKey').val('');
+                        $("input[name='verifyCode']").val('');
+                    }
+                });
+            }
+    		
+    		$('#verifyCode').click(function(){
+    			$.ajax({
+					url:'${ctxPath}/verifyCode',
+					success:function(response){
+						if(response.success){
+							$('#verifyCode').attr({'src':response.data.code})
+							$('#codeKey').val(response.data.cokeKey);
+							$("input[name='verifyCode']").val('');
+						}
+					}
+				});
+    		});
+    	});
+    </script>
+</html>

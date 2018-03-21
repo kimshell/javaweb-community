@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include('/common/common_header.html'){}  %>
+        <title>在线群聊</title>
+        <link href="https://cdn.bootcss.com/summernote/0.8.8/summernote.css" rel="stylesheet">
+   		<link rel="stylesheet" href="${ctxPath}/static/css/chat.css">
+    </head>
+    <body>
+		<% include('/common/common_body_header.html',{active:'chat'}){} %>
+		<%
+			//加载当前用户
+    		var userId = 'tourists';
+    		var name = '游客';
+    		var portrait = 'http://www.javaweb.io/static/image/anonymous.png';
+    		var location = 'javascript:void(0);';
+    		
+    		var session = userSession();
+    		if (session != null){
+    			userId = session.user.userId;
+    			name = session.user.name;
+    			portrait = session.user.portrait;
+    			location = ctxPath + '/user/' + userId;
+    		}
+    	%>
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2 col-md-offset-1">
+				
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title"> <span class="glyphicon glyphicon-user"></span> 在线用户  <span class="totalcount" style="color: green;">加载中...</span></h3>
+					    </div>
+					    <div class="panel-body">
+					    		
+				    		<!-- 当前用户开始 -->
+					    	<div class="panel panel-default">
+							    <div class="panel-body">
+							    	 <a style="cursor: pointer;" target="_blank" href="${location}">
+								       	 <img src="${portrait}" width="35px;" height="35px;" class="img-rounded img-circle"/>
+								       	 <span>${name}</span>
+							       	 </a>
+							    </div>
+							</div>
+							<!-- 当前用户结束 -->
+							<hr/>
+							
+							<!-- 其他用户开始 -->
+							<div>
+								<ul class="list-group" id="users-container">
+								</ul>
+							</div>
+							<!-- 其他用户结束-->
+							<!-- 游客开始 -->
+							<div>
+								<ul class="list-group" id="tourists-container">
+								</ul>
+							</div>
+							<!-- 游客结束 -->
+					    </div>
+					</div>
+					
+				</div>
+				
+				
+				
+				<div class="col-md-8">
+				    <div class="panel panel-default">
+				        <div class="panel-heading">
+				            <h3 class="panel-title head-time">2018年03月07日 10:05:34</h3>
+				        </div>
+				        <div class="panel-body chat" id="chat">
+				            <div class="chat-container" id="chat-container">
+				            </div>
+				        </div>
+				    </div>
+				    <!-- 编辑器开始 -->
+			    	<div>
+						<div id="summernote"></div>  
+						<button class="btn btn-success pull-right" id="send-btn">ctrl + enter 发送</button>
+					</div>
+					<!-- 编辑器结束 -->
+				    <!-- 
+				    <a href="javascript:" onclick="ChatHtml('left', {imgUrl: 11, name: 222, content: 333})">聊天信息1</a>
+				    <a href="javascript:" onclick="ChatHtml('right', {imgUrl: 11, name: 222, content: 333})">聊天信息2</a>
+				    <a href="javascript:" onclick="TipHtml('1231')">提示</a>
+				    -->
+				</div>
+				
+				<!--  
+				<div class="chat-user clearfix left">
+                    <div class="img">
+                        <img src="zImg.jpg" height="50" width="50"/>
+                    </div>
+                    <div class="chat-content">
+                        <div class="chat-page">
+                            <div class="user-name">暗杀</div>
+                            <div class="chat-information clearfix">
+                                <div class="information-page">
+                                    <img src="zImg.jpg"/>
+                                    打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的打发似打发打发的
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-tip">
+                    <span class="tip">
+                        某某加入了聊天
+                    </span>
+                </div>
+                <div class="chat-user clearfix right">
+                    <div class="img">
+                        <img src="zImg.jpg" height="50" width="50"/>
+                    </div>
+                    <div class="chat-content">
+                        <div class="chat-page">
+                            <div class="user-name">
+                                暗杀
+                            </div>
+                            <div class="chat-information clearfix">
+                                <div class="information-page">
+                                    asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12asdfasfasfasdf12
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				-->
+			</div>
+		</div>
+		
+		
+		
+		
+		<% include('/common/common_footer.html',{}){} %>
+    </body>
+	<% include('/common/common_script.html',{}){} %>
+	<script type="text/javascript" src="https://cdn.bootcss.com/summernote/0.8.8/summernote.js"></script>
+	<script type="text/javascript" src="https://cdn.bootcss.com/summernote/0.8.8/lang/summernote-zh-CN.js"></script>
+	<script type="text/javascript" src="${ctxPath}/static/js/chat.js"></script>
+    <script>
+    	if (!window.WebSocket){
+    		layer.alert('浏览器不支持WebSocket,换个再来聊吧', {
+				skin: 'layui-layer-lan',
+				closeBtn: 0
+			});
+    		throw "浏览器不支持websocket";
+    	}
+    	
+    	Date.prototype.now = function (){
+			var year = this.getFullYear();
+			var month = this.getMonth() + 1;	
+			if(month < 10){
+				month = "0" + month;
+			}
+			var dayOfMonth = this.getDate();
+			if(dayOfMonth < 10){
+				dayOfMonth = "0" + dayOfMonth;
+			}
+			var hours = this.getHours();		
+			if(hours < 10){
+				hours = "0" + hours;
+			}
+			var minutes = this.getMinutes();	
+			if(minutes < 10){
+				minutes = "0" + minutes;
+			}
+			var seconds = this.getSeconds();
+			if(seconds < 10){
+				seconds = "0" + seconds;
+			}
+			return year + "年" + month + "月" + dayOfMonth + "日 " + hours + ":" + minutes + ":" + seconds;
+		}
+    	
+    	var config = {
+    		webSocket:null,
+    		user:{
+    			userId:'${userId}',
+    			name:'${name}',
+    			portrait:'${portrait}',
+    		},
+    		//是否提示用户加入/退出消息
+    		showJoinQuit:false,
+    		//最后一次推送消息时间戳
+    		lastSendMessage:null,
+    		//单个消息体最大 1MB
+    		maxMessageSize:1024,
+    		//键盘事件发送消息flag
+    		sendFlag:true
+    	}
+    	
+    	$(function(){
+    		//编辑器初始化
+    		$('#summernote').summernote({
+				toolbar:[
+					//['Paragraph',['style','ol','ul','paragraph','height']],
+					//['Font',['fontname','fontsize','color','bold','italic','underline','strikethrough','superscript','subscript','clear']],
+					//['Insert',['picture','link','video','table','hr']],
+					//['Misc',['fullscreen','codeview','undo','redo','help']],
+					['Insert',['picture','link']]
+				],
+				placeholder:config.user.userId == 'tourists' ? '游客禁止发言' : '请输入发送的内容 ',
+				height: 100,                 
+				//focus: true,   
+				lang:'zh-CN',
+				callbacks:{
+					onEnter:function(e){
+						if(e.ctrlKey){
+							e.preventDefault();
+						} 
+					},
+					onImageUpload: function(files, editor, $editable) {
+						/**layer.alert('客官稍等,图片服务器搭建中....', {
+							skin: 'layui-layer-lan', 
+							closeBtn: 0
+            			},function(index){
+            				layer.close(index);
+            			});
+						return;**/
+						
+						if(files.length > 10){
+							layer.alert('一次最多只能上传10张图片', {
+								skin: 'layui-layer-lan', 
+								closeBtn: 0
+	            			},function(index){
+	            				layer.close(index);
+	            			});
+							return;
+						}
+						
+						var formData = new FormData();
+						
+						files = $('.note-image-input')[0].files;
+						
+						for(var x = 0; x < files.length; x++ ){
+							var file = files[x];
+							if(file.size > 1024 * 1024 *10){
+								layer.alert('单张图片大小不能超过10MB', {
+									skin: 'layui-layer-lan', 
+									closeBtn: 0
+		            			},function(index){
+		            				layer.close(index);
+		            			});
+								return;
+							}
+							formData.append("files", file);
+						}
+						layer.load(2);
+				        $.ajax({  
+				            data : formData,  
+				            type : "POST",  
+				            url : "${ctxPath}/oss/upload",
+				            cache : false,  
+				            contentType : false,  
+				            processData : false,  
+				            dataType : "JSON",  
+				            success: function(response) {
+				            	layer.closeAll();
+				            	if(response.success){
+				            		layer.msg('上传成功');
+				            		for(var x = 0 ;x < response.data.length ; x++){
+				            			$('#summernote').summernote('insertImage', response.data[x]);
+				            		}
+				            	}else{
+				            		layer.alert(response.message, {
+										skin: 'layui-layer-lan',
+										closeBtn: 0
+			            			},function(index){
+			            				layer.close(index);
+			            			});
+				            	}
+				            },
+				        });  
+					}  
+				},
+			});  
+    		
+    		//连接初始化
+    		config.webSocket = new WebSocket("ws://127.0.0.1:1024/channel/chat/${token!'tourists'}");
+    		config.webSocket.onmessage = function(e){
+    			var message = JSON.parse(e.data);
+    			if(message.type == 'MESSAGE'){//新的群组消息
+    				//消息正文
+    				var content = message.content;
+    				//发送消息的用户
+    				var user = message.attach;
+    				//该消息是否是自己发送的
+    				var isMine = (user.userId == config.user.userId);
+    				if(isMine){
+    					user.name = '';
+    				}
+    				ChatHtml(isMine ? 'right' : 'left',{userId:user.userId,imgUrl:user.portrait,name:user.name,content:content});
+    			}else if(message.type == 'QUIT'){//用户退出
+    				$('.totalcount').text(parseInt($('.totalcount').text()) - 1);
+    				var user = message.attach;
+    				if(user.userId == 'tourists'){
+    					$('#tourists-container').children().last().remove();
+    				}else{
+    					$('#' + user.userId).remove();
+    				}
+    				if(config.showJoinQuit){
+    					layer.alert(message.attach.name + ' 离开了聊天室',{
+        					title:'用户离开',
+        					offset: 'rb',
+        					time:2000,
+        					icon:5,
+        					shade:0
+        				},function(index){
+            				layer.close(index);
+            			});
+    				}
+    				TipHtml(message.attach.name + ' 离开了聊天室');
+    			}else if(message.type == 'JOIN'){//用户加入
+    				$('.totalcount').text(parseInt($('.totalcount').text()) + 1);
+    				pushUser(message.attach);
+    				if(config.showJoinQuit){
+	    				layer.alert('欢迎:' + message.attach.name + ' 加入了聊天室',{
+	    					title:'用户加入',
+	    					offset: 'rb',
+	    					time:2000,
+	    					icon:6,
+	    					shade:0
+	    				},function(index){
+            				layer.close(index);
+            			});
+    				}
+    				TipHtml(message.attach.name + ' 加入了聊天室');
+    			}else if(message.type == 'DATA_UPDATE'){//用户头像更新
+    				//TODO 用户头像更新
+    			}else if(message.type == 'NOTIFY'){//系统通知
+    				layer.alert(message.content, {
+        				skin: 'layui-layer-lan',
+        				closeBtn: 0,
+        			},function(index){
+        				layer.close(index);
+        			});	
+    			}else if(message.type == 'USERS'){//在线用户信息推送
+    				var users = message.attach;
+    				$('.totalcount').text(users.length + 1);
+    				if(users.length > 0){
+    					for(var x = 0 ;x < users.length; x++){
+    						pushUser(users[x]);
+    					}
+    				}
+    			}
+    		}
+    		
+    		config.webSocket.onopen = function(){
+    			layer.msg('欢迎您:' + config.user.name);
+    		}
+    		
+    		config.webSocket.onclose = function(e){
+    			var reason = e.reason;
+    			if(reason == ""){
+    				reason = '与服务器连接断开,请尝试刷新页面';
+    			}
+    			if(e.code == 1009){
+    				//消息过大,坏人发送的
+    				reason = '消息太长,最多可发送'+ config.maxMessageSize +'字节大小的文本数据(连接已经断开)';
+    			}
+    			layer.alert(reason, {
+    				skin: 'layui-layer-lan',
+    				closeBtn: 0
+    			},function(index){
+    				layer.close(index);
+    			});
+    		}
+    		
+    		config.webSocket.onerror = function(e){
+    			layer.alert('与服务器连接异常', {
+    				skin: 'layui-layer-lan',
+    				closeBtn: 0
+    			},function(index){
+    				layer.close(index);
+    			});	
+    		}
+    		
+    		
+    		//用户状态
+    		if(config.user.userId != 'tourists'){
+    			//回车事件
+        		$(document).keydown(onEnter);
+    			$('#send-btn').click(sendMessage);
+    		//游客状态
+    		}else{
+    			$('#summernote').summernote('disable');
+				$('#send-btn').addClass('disabled');
+    		}
+    	});
+    	
+    	window.setInterval(function(){
+    		$('.head-time').text(new Date().now());
+    	},1000);
+		
+    	
+    	//添加用户到在线列表
+    	function pushUser(user){
+    		var tourists = (user.userId == 'tourists');
+    		var userElement = renderUser(user);
+    		if(tourists){
+    			document.getElementById('tourists-container').appendChild(userElement);
+    		}else{
+    			document.getElementById('users-container').appendChild(userElement);
+    		}
+    	}
+    	
+    	//回车事件
+    	function onEnter(e){
+    		if (e.ctrlKey && e.keyCode == 13 && config.sendFlag)  {  
+    			sendMessage();
+    	    }  
+    	}
+		
+    	//渲染用户为dom节点
+    	function renderUser(user){
+			
+			//判断是否是游客
+			var tourists = (user.userId == 'tourists');
+			
+			//创建li标签
+			var li = document.createElement('li');
+			if(!tourists){
+				li.setAttribute('id',user.userId);
+			}
+			li.setAttribute('class','list-group-item');
+			
+			//创建a标签
+			var a = document.createElement('a');
+			a.setAttribute('style','cursor: pointer;')
+			a.setAttribute('target','_blank');
+			if(tourists){
+				a.setAttribute('href','javascript:void(0);');
+			}else{
+				a.setAttribute('href','${ctxPath}/user/' + user.userId);	
+			}
+			
+			//创建img标签
+			var img = document.createElement('img');
+			img.setAttribute('src',user.portrait);
+			img.setAttribute('width','35px;')
+			img.setAttribute('height','35px;')
+			img.setAttribute('class','img-rounded img-circle')
+			
+			//创建span标签
+			var span = document.createElement('span');
+			span.appendChild(document.createTextNode(user.name));
+			
+			//组装dom
+			a.appendChild(img);
+			a.appendChild(span);
+			li.appendChild(a);
+			return li;
+    	}
+    	//消息发送
+    	function sendMessage(){
+    		//消息是否为空
+    		var text = $('#summernote').summernote('code');
+    		if(text == '' || text == '<p><br></p>'){
+				layer.msg('请输入内容');
+				return;
+			}
+    		//消息大小是否超出限制
+    		if(new Blob([text]).size > config.maxMessageSize){
+    			layer.alert('消息太长,最多可发送'+ config.maxMessageSize +'字节大小的文本数据', {
+    				skin: 'layui-layer-lan',
+    				closeBtn: 0
+    			},function(index){
+    				layer.close(index);
+    			});	
+    			return;
+    		}
+    		//消息发送频率是否过快
+    		var now = new Date().getTime();
+    		if(config.lastSendMessage != null){
+    			if((now - config.lastSendMessage) < 1500){
+    				layer.msg('发送太快了,慢点');
+    				config.lastSendMessage = now;
+    				return;
+    			}
+    		}
+    		config.lastSendMessage = now;
+    		//确定与服务器保持连接状态
+    		if(config.webSocket.readyState != 1){
+    			layer.alert('与服务器连接断开', {
+    				skin: 'layui-layer-lan',
+    				closeBtn: 0
+    			},function(index){
+    				layer.close(index);
+    			});	
+    			return;
+    		}
+    		//推送消息到服务器
+    		config.webSocket.send(text);
+    		//清空编辑器
+    		$('#summernote').summernote('reset');
+    	}
+    </script>
+</html>

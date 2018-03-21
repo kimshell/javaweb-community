@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <% include('/common/common_header.html'){}  %>
+	    <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" href="${ctxPath}/static/css/detail.css"/>
+        <link href="https://cdn.bootcss.com/summernote/0.8.8/summernote.css" rel="stylesheet">
+	    <title>${post.title}</title>
+	    <style type="text/css">
+	    	.detail-content img{max-width:100%;height:auto}
+	    	.content img{max-width:100%;height:auto}
+	    	
+	    	
+	    	.user-role {
+				display: inline-block;
+				color: #fff;
+				padding: 0px 5px 0px 5px;
+				font-weight: bold;
+				border-radius: 3px
+			}
+
+			.user-role-admin {
+				background: #449d44;
+				/**background: #FF5722;**/
+			}
+			
+			.user-role-manager {
+				background: #449d44;
+			}
+	    </style>
+	</head>
+	<body>
+		
+		<% include('/common/common_body_header.html',{active:'none'}){} %>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-7 col-md-offset-1">
+					<%  //文章开始
+					
+						//匿名处理,屏蔽名称和头像
+						if(post.anonymous){
+							post.author.name = '匿名用户';
+							post.author.portrait = ctxPath + '/static/image/anonymous.png';
+						}
+						
+						var postUserLink = post.anonymous ? 'javascript:void(0);' : ctxPath + '/user/' + post.author.userId;
+					%>
+                    <div class="detail-container">
+                        <div class="detail-header">
+                            <div class="title">
+                                <span style="font-size: 24px;line-height: 36px;">${post.title}</span>
+                                <div style="float: right;">
+                                	<%if(nvl(post.isAuthor,false)){%>
+                                		<a class="btn btn-primary btn-sm" target="_blank" href="${ctxPath}/post/update/${post.postId}">编辑</a>
+                                	<%}%>
+                                	<button data-options="${post.postId}" id="collection" class="btn btn-success btn-sm ${nvl(post.isCollection,false) ? 'active'}">${nvl(post.isCollection,false) ? '<pan class=\'glyphicon glyphicon-remove\'></pan> 取消收藏':'<pan class=\'glyphicon glyphicon-ok\'></pan> 收藏'}</button>
+                                </div>
+                               
+                            </div>
+                            <div class="information">
+                                <div class="tag">
+	                                <%	
+										var color = '';
+										var type = '';
+										if(post.type == 'DISCUSS'){
+											color = 'discuss';
+											type = '技术交流';
+										}else if(post.type == 'HELP'){
+											color = 'help';
+											type = '求助问答';
+										}else if(post.type == 'LEISURE'){
+											color = 'leisure';
+											type = '休闲灌水';
+										}else if(post.type == 'NOTICE'){
+											color = 'notice';
+											type = '社区公告';
+										}else if(post.type == 'SUGGEST'){
+											color = 'suggest';
+											type = '建议/BUG';
+										}
+	                                %>
+                                		<span class="${color}">${type}</span>
+                                
+		                                <% if(post.essence){ %>
+										 	<span class="bg337ab7">精品</span>
+										<%  } %>
+		
+										<% if(post.replyCount >= 100 ){ //回复有超过100 %>
+		                               		 <span class="bgd9534f">热门</span>
+		                               	<%  } %>
+		                               	
+		                               	<% if(post.top){ %>
+		                               		 <span class="bgf0ad4e">置顶</span>
+		                               	<%  } %>
+                                    
+                                </div>
+                                <div class="right">
+                                	<span style="margin-right: 10px;"><i class="fa fa-eye"></i>${post.browse} </span>
+                                    <span><i class="fa fa-commenting-o"></i>${post.replyCount}</span>
+                                </div>
+                            </div>
+                            <div class="landlord">
+                                <div class="media">
+                                    <div class="media-left" style="border: 1">
+                                        <a href="${postUserLink}">
+                                            <img class="media-object"style="width: 50px;height: 50px"  width="50" height="50" src="${post.author.portrait}" alt="作者头像" onerror="this.src = '${ctxPath}/static/icon/green_200.png'">
+                                        </a>
+                                    </div>
+                                    <div class="media-body" style="line-height:50px;">
+                                        <div class="name">
+                                            <a href="${postUserLink}">${post.author.name}</a>
+                                            <span>${postDate(post.createDate)}</span>
+                                        </div>
+                                        <!-- 
+                                        <div class="collection">
+                                            <a href="javascript:void(0);">收藏</a>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="detail-content" id="detail-content-master">
+                        	${post.content}
+                        </div>
+                        <hr/>
+                        <div style="text-align: center;" data-options="${post.postId}">
+                        	<%//文章的顶/踩%>
+                        	<a href="javascript:" style="width: 60px;display: inline-block;" class="post-attitude ${nvl(post.isAgree,false)?'on'}">
+                                 <i class="fa fa-thumbs-up fa-2x"></i><span>${post.agreeCount}</span>
+                             </a>
+                             <a href="javascript:" style="width: 60px;display: inline-block;" class="post-attitude ${nvl(post.isDisAgree,false)?'on'}">
+                                 <i class="fa fa-thumbs-down fa-2x"></i><span>${post.disAgreeCount}</span>
+                             </a>
+                        </div>
+                    </div>
+					<%  //文章结束  %>
+                    <%  //回复开始  %>
+                    <div class="detail-replies">
+                        <div class="replies-title">
+                            <span id="reply-lists">回帖</span>
+                        </div>
+                        
+                        <ul class="replies-content" style="list-style: none;">
+                        	
+                        	<%	//遍历回复信息开始
+                        		for(var reply in replys){
+                        		
+                        			//匿名处理,屏蔽名称和头像
+									if(reply.anonymous){
+										reply.author.name = '匿名用户';
+										reply.author.portrait = ctxPath + '/static/image/anonymous.png';
+									}
+									
+									var replyUserLink = reply.anonymous ? 'javascript:void(0);' : ctxPath + '/user/' + reply.author.userId;
+                        	%>
+                        	
+                        	
+	                        	<li class="li">
+	                                <div class="media">
+	                                    <div class="media-left">
+	                                        <a href="${replyUserLink}">
+	                                            <img class="media-object"style="width: 50px;height: 50px"  width="50" height="50" src="${reply.author.portrait}" alt="作者头像">
+	                                        </a>
+	                                    </div>
+	                                    <div class="media-body">
+	                                        <div id="reply-${reply.replyId}">
+	                                            <a href="${replyUserLink}">${reply.author.name}</a>
+	                                            <%if(!reply.anonymous){%>
+			                                    	<%if(reply.author.role == 'ADMIN'){%>
+			                                    		<span class="user-role user-role-admin" >站长</span>
+			                                    	<%}else if(reply.author.role == 'MANAGER'){%>
+			                                    		<span class="user-role user-role-manager" >管理员</span>
+			                                    	<%}%>
+		                                    	<%}%>
+	                                        </div>
+	                                        <div style="margin-top: 10px">
+	                                            <span style="color: #999">${postDate(reply.createDate)}</span>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                                <div class="content">
+	                                    ${reply.status == 'NORMAL' ? reply.content : '<span style="color: red;">该回复已经被删除</span>'}
+	                                </div>
+	                                <div class="footer" data-options="${reply.replyId}">
+	                                    <a href="javascript:" style="width: 60px;display: inline-block;" class="attitude ${nvl(reply.isAgree,false)?'on'}">
+	                                        <i class="fa fa-thumbs-up"></i><span>${reply.agreeCount}</span>
+	                                    </a>
+	                                    <a href="javascript:" style="width: 60px;display: inline-block;" class="attitude ${nvl(reply.isDisAgree,false)?'on'}">
+	                                        <i class="fa fa-thumbs-down"></i><span>${reply.disAgreeCount}</span>
+	                                    </a>
+	                                    <a href="javascript:" style="width: 80px;display: inline-block;" data-options="replyId:'${reply.replyId}',authorName:'${reply.author.name}'" class="reply-control">
+	                                        <i class="fa fa-reply"></i>回复
+	                                    </a>
+	                                </div>
+	                            </li>
+                        	<%
+                        		}elsefor{	
+                        	%>
+	                       			<div style="text-align: center;">
+	                        			<h3>还没有任何回复</h3>
+	                        		</div>
+                        	<%
+                        		}//回复遍历结束
+                        	%>
+                        </ul>
+                    </div>
+                    <%  //回复结束  %>
+                    
+                    <%  //分页开始 (重复造个轮子)%>
+					<div style="text-align: center;">
+						<ul class="pagination ">
+							<%
+								var begin = 0;
+								var end = 0;
+								if(pageInfo.totalPage <= 10){
+									begin = 1;
+									end = pageInfo.totalPage;
+								}else{
+									begin = pageInfo.page - 5;
+									end = pageInfo.page + 4;
+									if(begin < 1){
+										begin = 1;
+										end = 10;
+									}
+									if(end > pageInfo.totalPage){
+										begin = pageInfo.totalPage - 9;
+										end = pageInfo.totalPage;
+									}	
+								}
+							%>
+							
+							<% if(begin > 1){%>
+								<li><a href="${ctxPath}/post/${post.postId}?page=1#reply-lists">首页</a></li>
+							<%}%>
+							
+							<% if(pageInfo.page > 1){ %>
+								<li><a href="${ctxPath}/post/${post.postId}?page=${pageInfo.page - 1}#reply-lists">上一页</a></li>
+							<%}%>
+							
+							<% 	for(var i = begin ; i <= end; i++){ %>
+									<li ${pageInfo.page == i ? 'class="active"'}><a href="${pageInfo.page == i ? 'javascript:void(0);':ctxPath + '/post/' + post.postId + '?page=' + i + '#reply-lists'} " >${i}</a></li>
+							<% }	%>
+							 
+							 <% if(pageInfo.totalPage > pageInfo.page){ %>
+								<li><a href="${ctxPath}/post/${post.postId}?page=${pageInfo.page + 1}#reply-lists">下一页</a></li>
+							<%}%>
+							
+							<% if(pageInfo.totalPage > end ){%>
+								<li><a href="${ctxPath}/post/${post.postId}?page=${pageInfo.totalPage}#reply-lists'">尾页</a></li>
+							<%}%>
+						</ul>
+					</div>
+                    <%	//分页结束%>
+                    
+                    <%//编辑器开始 %>
+                    <form class="form-horizontal" role="form" id="reply-form">
+                    	<input type="hidden" name="postId" value="${post.postId}"/>
+                    	<input type="hidden" name="parentId" value=""/>
+                    	<input type="hidden" name="codeKey" id="codeKey"/>
+                    	<div>
+                    		<div id="summernote"></div>
+                    	</div>
+                    	<div class="form-group">
+							<div class="col-sm-2">
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" name="anonymous" value="true" ${post.replyControl == 'DISALLOW_ANONYMOUS'?'disabled="disabled"'}>匿名发布
+									</label>
+								</div>
+							</div>
+						</div>
+						<div id="code-input" class="form-group hide">
+							<div class="col-sm-2">
+								<input type="text" class="form-control" id="code" name="verifyCode" placeholder="人类验证">
+							</div>
+							<img id="verifyCode" alt="" width="70px;" height="35px;" style="cursor: pointer;">
+						</div>
+                    </form>
+                    <div>
+						<button class="btn btn-block btn-success" id="post-reply">
+							<span class="glyphicon glyphicon-ok-sign"></span> 回复
+						</button>
+					</div>
+					<%//编辑器结束 %>
+				</div>
+				<% include('/common/common_right_menu.html',{}){} %>
+			</div>
+		</div>
+		
+
+		
+		<% include('/common/common_footer.html',{}){} %>
+	</body>
+	<% include('/common/common_script.html',{}){} %>
+	<script src="https://cdn.bootcss.com/summernote/0.8.9/summernote.js"></script>
+	<script src="https://cdn.bootcss.com/summernote/0.8.8/lang/summernote-zh-CN.js"></script>
+	
+	<script type="text/javascript">
+		$(function(){
+			$('#verifyCode').click(function(){
+				$('#codeKey').val('');
+				$.ajax({
+					url:'${ctxPath}/verifyCode',
+					success:function(response){
+						if(response.success){
+							$('#verifyCode').attr({'src':response.data.code})
+							$('#codeKey').val(response.data.cokeKey);
+							$("input[name='verifyCode']").val('');
+						}
+					}
+				});
+			});
+			
+			
+			<%
+				var disableEdtor = false;
+				var placeholder = '该帖不允许回复';
+				if(post.replyControl == 'ALLOW' || post.replyControl == 'DISALLOW_ANONYMOUS'){		//允许所有回复
+					disableEdtor = true;
+					placeholder = '请输入回复内容';
+				}else if(post.replyControl == 'DISALLOW_OTHER'){		//仅仅允许作者回复
+					if(nvl(post.isAuthor,false)){
+						disableEdtor = true;
+						placeholder = '仅仅允许您自己发表回复信息';
+					}
+				}
+			%>
+			
+			$('#summernote').summernote({
+				toolbar:[
+					['Paragraph',['style','ol','ul','paragraph','height']],
+					['Font',['fontname','fontsize','color','bold','italic','underline','strikethrough','superscript','subscript','clear']],
+					['Insert',['picture','link','video','table','hr']],
+					['Misc',['fullscreen','codeview','undo','redo','help']],
+				],
+				placeholder:'${placeholder}',
+				height: 150,                 
+				focus: false,   
+				lang:'zh-CN',
+				focus:false,
+				callbacks:{
+					onChange: function(contents, $editable) {
+						if($('#summernote').summernote('isEmpty')){
+							$("input[name='parentId']").val('');
+						}
+					},
+					onImageUpload: function(files, editor, $editable) {
+						if(files.length > 10){
+							layer.alert('一次最多只能上传10张图片', {
+								skin: 'layui-layer-lan', //样式类名
+								closeBtn: 0
+	            			});
+							return;
+						}
+						var formData = new FormData();  
+						for(var i = 0 ; i < files.length; i++){
+							formData.append("files", $('.note-image-input')[0].files[i]);  
+						}
+						
+						layer.load(2);
+						
+				        $.ajax({  
+				            data : formData,  
+				            type : "POST",  
+				            url : "${ctxPath}/upload",
+				            cache : false,  
+				            contentType : false,  
+				            processData : false,  
+				            dataType : "JSON",  
+				            success: function(response) {
+				            	layer.closeAll();
+				            	if(response.success){
+				            		for(var i = 0 ; i < response.data.length; i++){
+				            			$('#summernote').summernote('insertImage', response.data[i]);
+				            		}
+				            	}else{
+				            		if(response.status == 'MISSING_VERIFY_CODE' || response.status == 'VERIFY_CODE_FAIL'){
+				            			response.message = '行为异常,限定时间内图片上传数量超过限制,请联系管理员';
+				            		}
+				            		layer.alert(response.message, {
+										skin: 'layui-layer-lan',
+										closeBtn: 0
+			            			});
+				            	}
+				            },  
+				        });  
+					}  
+				},
+			});  
+			
+			
+			if(!${disableEdtor}){
+				$('#summernote').summernote('disable');
+				$('#post-reply').addClass('disabled');
+			}
+			
+			$('.reply-control').click(function(){
+				if(!${disableEdtor}){
+					return;
+				}
+				var options = eval("({" + $(this).attr('data-options') + "})");
+				$('#summernote').summernote('focus');
+				$('#summernote').summernote('reset');
+				$('#summernote').summernote('insertText','回复:@' + options.authorName + ' ');
+				$("input[name='parentId']").val(options.replyId);
+			});
+			
+			$('#post-reply').click(function(){
+				
+				if($(this).hasClass('disabled')){
+					return;
+				}
+				
+				var formArray = $('#reply-form').serializeArray();
+				
+				var content = $('#summernote').summernote('code');
+				
+				if(content == '' || content == '<p><br></p>'){
+					layer.msg('请输入内容');
+					return;
+				}
+				formArray.push({name:'content',value:content})
+				
+				layer.load(2);
+				
+				$(this).addClass('disabled');
+    			$(this).text('提交中... ...')
+				
+				$.ajax({
+					url:'/post/reply',
+					data:formArray,
+					method:'POST',
+					success:function(response){
+						if(response.success){
+							var data = response.data;
+							var url = "${ctxPath}/post/" + data.postId + "?page=" + data.page + "&broadCast=false&temp=" + new Date().getTime() + "#reply-" + data.replyId; 
+							window.location.href = url;
+						}else{
+							layer.closeAll();
+							layer.msg(response.status == 'MISSING_VERIFY_CODE' ? '请输入验证码' : response.message);
+    						if(response.status == 'MISSING_VERIFY_CODE'){
+    							$('#code-input').removeClass('hide');
+    							$('#verifyCode').click();
+    						}else{
+    							if(!$('#code-input').hasClass('hide')){
+    								$('#verifyCode').click();
+    							}
+    						}
+    						$('#post-reply').removeClass('disabled');
+        	    			$('#post-reply').text('回复');
+						}
+					}
+				});
+			});
+			
+			$('.attitude').click(function(){
+				var childrens = $(this).children();
+				var replyId = $(this).parent().attr('data-options');
+				var requestBody = {
+					targetId:replyId,
+					target:'POST_REPLY'
+				}
+				if($(childrens[0]).hasClass('fa-thumbs-down')){
+					requestBody.type = 'DIS_AGREE';
+				}else{
+					requestBody.type = 'AGREE';
+				}
+				if($(this).hasClass('on')){
+					requestBody.operation = 'cancel';
+				}else{
+					requestBody.operation = 'sure';
+				}
+				var node = $(this);
+				
+				layer.load(2);
+				
+				$.ajax({
+					url:'${ctxPath}/attitude',
+					method:'POST',
+					data:requestBody,
+					success:function(response){
+						layer.closeAll();
+						if(response.success){
+							layer.closeAll();
+							if(node.hasClass('on')){
+								node.removeClass('on');
+							}else{
+								node.addClass('on');
+							}
+							$(childrens[1]).text(response.data);
+						}else{
+							layer.msg(response.message);
+						}
+					}
+				});
+			});
+			
+			//重复造个轮子
+			$('.post-attitude').click(function(){
+				var childrens = $(this).children();
+				var postId = $(this).parent().attr('data-options');
+				var requestBody = {
+					targetId:postId,
+					target:'POST'
+				}
+				if($(childrens[0]).hasClass('fa-thumbs-down')){
+					requestBody.type = 'DIS_AGREE';
+				}else{
+					requestBody.type = 'AGREE';
+				}
+				if($(this).hasClass('on')){
+					requestBody.operation = 'cancel';
+				}else{
+					requestBody.operation = 'sure';
+				}
+				var node = $(this);
+				
+				layer.load(2);
+				
+				$.ajax({
+					url:'${ctxPath}/attitude',
+					method:'POST',
+					data:requestBody,
+					success:function(response){
+						layer.closeAll();
+						if(response.success){
+							layer.closeAll();
+							if(node.hasClass('on')){
+								node.removeClass('on');
+							}else{
+								node.addClass('on');
+							}
+							$(childrens[1]).text(response.data);
+						}else{
+							layer.msg(response.message);
+						}
+					}
+				});
+			});
+			
+			$('#collection').click(function(){
+				var url = '${ctxPath}/collection/create';
+				if($(this).hasClass('active')){
+					url = '${ctxPath}/collection/remove';
+				}
+				
+				var btn = this;
+				layer.load(2);
+				
+				$.ajax({
+					url:url,
+					method:'POST',
+					data:{
+						postId:'${post.postId}'
+					},
+					success:function(response){
+						layer.closeAll();
+						if(response.success){
+							if(!$(btn).hasClass('active')){
+								layer.msg('收藏成功');
+								$(btn).html('<pan class=\'glyphicon glyphicon-remove\'></pan> 取消收藏')
+								$(btn).addClass('active');
+							}else{
+								layer.msg('取消收藏成功');
+								$(btn).html('<pan class=\'glyphicon glyphicon-ok\'></pan> 收藏')
+								$(btn).removeClass('active');
+							}
+						}else{
+							layer.msg(response.message);
+						}
+					}
+				});
+			});
+
+			//文章图片预览
+			$contentMaster = $("#detail-content-master").find("img");
+			if($contentMaster.length>0) {
+				$.each($contentMaster,function (i,v) {
+                    $(v).attr("layer-src",$(v).attr("src"));
+                    $(v).css("cursor","pointer");
+                });
+                layer.photos({
+                    photos: '#detail-content-master'
+					,closeBtn: 2
+                    ,shift: 5 //0-6的选择，指定弹出图片动画类型，默认随机
+                });
+            }
+
+			//回帖图片预览
+            var len = $("p").find("img").length;
+			if(len>0) {
+                $.each($("p").find("img"),function (i,v) {
+					$(v).attr("layer-src",$(v).attr("src"));
+					$(v).css("cursor","pointer");
+					$(v).parent().parent().attr("id","layer-photos-self"+i);
+                    layer.photos({
+                        photos: '#layer-photos-self'+i
+                        ,closeBtn: 2
+                        ,shift: 5 //0-6的选择，指定弹出图片动画类型，默认随机
+                    });
+                });
+            }
+
+		});
+	</script>
+</html>

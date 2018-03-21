@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include('/common/common_header.html'){}  %>
+        <title>登录</title>
+    </head>
+    <body>
+		<% include('/common/common_body_header.html',{active:'login'}){} %>
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-4 col-md-offset-4">
+				
+					<div class="panel panel-default">
+				    	<div class="panel-body">
+					    	<form class="form-horizontal" role="form" id="login-form">
+								<input type="hidden" name="codeKey" id="codeKey"/>
+								<div class="form-group">
+									<label for="account" class="col-sm-3 control-label" style="text-align: left;">账　　户</label>
+									<div class="col-sm-9">
+										<input type="text" id="account" class="form-control" name="account" placeholder="邮箱/用户名">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="password" class="col-sm-3 control-label" style="text-align: left;">密　　码</label>
+									<div class="col-sm-9">
+										<input type="password" id="password" class="form-control" name="password" placeholder="登录密码">
+									</div>
+								</div>
+								
+								<div id="code-input" class="form-group hide">
+									<label for="code" class="col-sm-3 control-label" style="text-align: left;">人类验证</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" id="code" name="verifyCode" placeholder="验证码">
+									</div>
+									<img id="verifyCode" alt="" width="70px;" height="35px;" style="cursor: pointer;">
+								</div>
+							
+								<div class="form-group">
+									<div class="col-sm-offset-3 col-sm-10">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="remenber" value="true">记住账户
+											</label>
+											<span style="margin-left: 20%;">
+												<a onclick="forgetPass();" style="cursor: pointer;">忘记密码</a>
+											</span>
+										</div>
+									</div>
+								</div>
+							  
+							</form>
+							<div>
+								<button id="login-btn" class="btn btn-default btn-block">
+									<span class="glyphicon glyphicon-ok-circle"></span> 登录
+								</button>
+							</div>
+				    	</div>
+			    	</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		
+		<% include('/common/common_footer.html',{}){} %>
+    </body>
+	<% include('/common/common_script.html',{}){} %>
+    <script>
+    	
+    	$(function(){
+    		
+    		$('#login-btn').click(function(){
+    			
+    			if($(this).hasClass('disabled')){
+    				return;
+    			}
+    			
+    			login();
+    		});
+
+            // $(document).keyup(function (e) {
+    		 //    var event = e.keyCode || e.which;
+            //     if(event == 13){
+            //         login();
+            //     }
+            // });
+
+            document.onkeydown=function(event) {
+                e = event ? event :(window.event ? window.event : null);
+                var currKey=0;
+                currKey=e.keyCode||e.which||e.charCode;
+                if(currKey==13){
+                    login();
+                }
+            };
+
+    		function login() {
+                var formData = $('#login-form').serializeArray();
+
+                var account = formData[1]['value'];
+                var password = formData[2]['value'];
+                var remeber = null;
+                if (formData.length > 3){
+                    remeber = formData[2]['value'];
+                }else{
+                    remeber = 'false';
+                }
+
+                //不能包含空格
+                if(!new RegExp("^\\S+$").test(account)){
+                    layer.msg('用户名格式不正确');
+                    return;
+                }
+                //不能包含汉字或者空格
+                if(!new RegExp("^[^\\u4e00-\\u9fa5\\s]{6,16}$").test(password)){
+                    layer.msg('密码格式不正确');
+                    return;
+                }
+
+                $(this).addClass('disabled');
+                $(this).text('登录中... ...')
+
+                layer.load(2);
+
+                $.ajax({
+                    url:'${ctxPath}/login',
+                    method:'POST',
+                    data:formData,
+                    success:function(response){
+                        if(response.success){
+                            window.location.href = '${from!}' || '${ctxPath}/index';
+                        }else{
+                            layer.closeAll();
+                            layer.msg(response.status == 'MISSING_VERIFY_CODE' ? '请输入验证码' : response.message);
+                            if(response.status == 'MISSING_VERIFY_CODE'){
+                                $('#code-input').removeClass('hide');
+                                $('#verifyCode').click();
+                            }else{
+                                if(!$('#code-input').hasClass('hide')){
+                                    $('#verifyCode').click();
+                                }
+                            }
+                            $('#login-btn').removeClass('disabled');
+                            $('#login-btn').text('登录');
+                        }
+                    },
+                    complete:function(){
+                        $('#codeKey').val('');
+                        $("input[name='verifyCode']").val('');
+                    }
+                });
+            }
+    		
+    		$('#verifyCode').click(function(){
+    			$('#codeKey').val('');
+    			$.ajax({
+					url:'${ctxPath}/verifyCode',
+					success:function(response){
+						if(response.success){
+							$('#verifyCode').attr({'src':response.data.code})
+							$('#codeKey').val(response.data.cokeKey);
+							$("input[name='verifyCode']").val('');
+						}
+					}
+				});
+    		});
+    	});
+    	function forgetPass(){
+    		var account = $("input[name='account']").val();
+    		if(!account){
+    			layer.msg('请输入用户名');
+				return;
+    		}else if(!new RegExp("^\\S+$").test(account)){
+				layer.msg('用户名格式不正确');
+				return;
+			}
+    		layer.load(2);
+    		$.ajax({
+    			url:'${ctxPath}/forgetpass',
+    			method:'POST',
+    			data:'account=' + account,
+    			success:function(rep){
+    				layer.closeAll();
+    				if(rep.success){
+    					rep.message = '密码重置邮件已经发送至该账户邮箱,请点击邮件中的链接来重置登录密码';
+    				}
+    				layer.alert(rep.message, {
+						skin: 'layui-layer-lan',
+						closeBtn: 0
+        			});
+    			}
+    		});
+    	}
+    </script>
+</html>

@@ -1,0 +1,76 @@
+<div class="col-md-3">
+	<%// 快捷通道开始 %>
+	<div class="panel panel-default">
+	    <div class="panel-heading">
+	        <h3 class="panel-title"><span class="glyphicon glyphicon-th-large"></span> 快捷通道</h3>
+	    </div>
+	    <div class="panel-body">
+	    	<div class="quik-passage list-group-item">
+	    		<button class="btn btn-block btn-success" onclick="window.location.href='${ctxPath}/post/create'">
+	    			<span class="glyphicon glyphicon-edit"></span> 说点什么
+	    		</button>
+	    	</div>
+	    	<a class="quik-passage list-group-item" target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=0d7bad56dd20ec31ecbc7c354ae89d5169ac83b3a7ccc66744972d5d47cec595">
+	    		<img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Developer" title="Developer"> QQ群
+	    	</a>
+	    	<a class="quik-passage list-group-item" target="_blank" href="http://www.javaweb.io/post/656DACDE486D440880FC6EA481269792">
+	    		友情连接申请
+	    	</a>
+	    </div>
+	</div>
+	<%// 快捷通道结束 %>
+	
+	<% //一周热门开始 %>
+	<div class="panel panel-default">
+	    <div class="panel-heading">
+	        <h3 class="panel-title"><span class="glyphicon glyphicon-fire"></span> 一周热门</h3>
+	    </div>
+	    <div class="panel-body">
+	    	<!-- 
+			<a href="#" class="quik-passage list-group-item">javaweb开发者社区</a>
+			<a href="#" class="quik-passage list-group-item">Boostrap官网</a>
+			<a href="#" class="quik-passage list-group-item">SpringBoot官网</a>
+			 -->
+	    </div>
+	</div>
+	<% //本周热门结束 %>
+	
+	<%// 友情连接开始 %>
+	<div class="panel panel-default">
+	    <div class="panel-heading">
+	        <h3 class="panel-title"><span class="glyphicon glyphicon-align-justify"></span> 友情连接</h3>
+	    </div>
+	    <div class="panel-body">
+	    	<%
+	    		var friendLinks = friendLink();
+	    		for(var link in friendLinks){
+	    	%>
+	    			<!-- 
+	    			<a href="${link.url}" target="_blank" class="quik-passage list-group-item">
+	    				<img  class="img-rounded img-circle" src="${isEmpty(link.logo) ? ctxPath + '/static/image/friendlink.png' : link.logo}" width="30px;" height="30px;" onerror="this.src = '${ctxPath}/static/image/friendlink.png'"> ${link.name}
+	    			</a> -->
+	    			<span class="label"><a href="${link.url}" target="_blank">${link.name}</a></span>
+	    	<%}%>
+	    </div>
+	</div>
+	<%// 友情连接结束 %>
+	
+	<div class="panel panel-default">
+    	<div class="panel-body" style="text-align: center;">
+	        <img style="cursor: pointer;" src="${ctxPath}/static/icon/green_200.png" id="right-logo"/>
+	        <script type="text/javascript">
+	        
+	        	var logo = document.getElementById('right-logo')
+	        	
+	        	logo.onmouseover = function(){
+	        		this.src = '${ctxPath}/static/icon/blue_200.png';
+	        	}
+	        	logo.onmouseout = function(){
+	        		this.src = '${ctxPath}/static/icon/green_200.png';
+	        	}
+	        	
+	        </script>
+	    </div>
+	</div>
+</div>
+

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.PostMapper">
+
+	<sql id="BASE_FIELD">
+		`${alias}`.`modify_date` AS `modifyDate`,
+		`${alias}`.`essence` AS `essence`,
+		`${alias}`.`reply_control` AS `replyControl`,
+		`${alias}`.`remark` AS `remark`,
+		`${alias}`.`post_id` AS `postId`,
+		`${alias}`.`title` AS `title`,
+		`${alias}`.`type` AS `type`,
+		`${alias}`.`content` AS `content`,
+		`${alias}`.`sorted` AS `sorted`,
+		`${alias}`.`top` AS `top`,
+		`${alias}`.`anonymous` AS `anonymous`,
+		`${alias}`.`create_user` AS `createUser`,
+		`${alias}`.`browse` AS `browse`,
+		`${alias}`.`create_date` AS `createDate`,
+		`${alias}`.`status` AS `status`
+	</sql>
+	
+	<sql id="BASE_SELECT">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_post` AS `t`
+		<where>
+			<if test="modifyDate != null">AND t.`modify_date` = #{modifyDate}</if>
+			<if test="essence != null">AND t.`essence` = #{essence}</if>
+			<if test="replyControl != null">AND t.`reply_control` = #{replyControl}</if>
+			<if test="remark != null">AND t.`remark` = #{remark}</if>
+			<if test="postId != null">AND t.`post_id` = #{postId}</if>
+			<if test="title != null">AND t.`title` = #{title}</if>
+			<if test="type != null">AND t.`type` = #{type}</if>
+			<if test="content != null">AND t.`content` = #{content}</if>
+			<if test="sorted != null">AND t.`sorted` = #{sorted}</if>
+			<if test="top != null">AND t.`top` = #{top}</if>
+			<if test="anonymous != null">AND t.`anonymous` = #{anonymous}</if>
+			<if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+			<if test="browse != null">AND t.`browse` = #{browse}</if>
+			<if test="createDate != null">AND t.`create_date` = #{createDate}</if>
+			<if test="status != null">AND t.`status` = #{status}</if>
+		</where>	
+	</sql>
+	
+	<select id="queryByPrimaryKey" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.PostEntity">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_post` AS `t`
+		WHERE
+			t.`post_id` = #{postId}
+	</select>
+	
+	<select id="queryByParamSelective" parameterType="io.javaweb.community.entity.PostEntity" resultType="io.javaweb.community.entity.PostEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<select id="queryByParamSelectiveSole" parameterType="io.javaweb.community.entity.PostEntity" resultType="io.javaweb.community.entity.PostEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<insert id="create" parameterType="io.javaweb.community.entity.PostEntity" >
+		INSERT INTO 
+			`jw_post`
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="modifyDate != null">`modify_date`,</if>
+			<if test="essence != null">`essence`,</if>
+			<if test="replyControl != null">`reply_control`,</if>
+			<if test="remark != null">`remark`,</if>
+			<if test="postId != null">`post_id`,</if>
+			<if test="title != null">`title`,</if>
+			<if test="type != null">`type`,</if>
+			<if test="content != null">`content`,</if>
+			<if test="sorted != null">`sorted`,</if>
+			<if test="top != null">`top`,</if>
+			<if test="anonymous != null">`anonymous`,</if>
+			<if test="createUser != null">`create_user`,</if>
+			<if test="browse != null">`browse`,</if>
+			<if test="createDate != null">`create_date`,</if>
+			<if test="status != null">`status`,</if>
+		</trim>
+		<trim prefix=" VALUES(" suffix=")" suffixOverrides=",">
+			<if test="modifyDate != null">#{modifyDate},</if>
+			<if test="essence != null">#{essence},</if>
+			<if test="replyControl != null">#{replyControl},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="postId != null">#{postId},</if>
+			<if test="title != null">#{title},</if>
+			<if test="type != null">#{type},</if>
+			<if test="content != null">#{content},</if>
+			<if test="sorted != null">#{sorted},</if>
+			<if test="top != null">#{top},</if>
+			<if test="anonymous != null">#{anonymous},</if>
+			<if test="createUser != null">#{createUser},</if>
+			<if test="browse != null">#{browse},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="status != null">#{status},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="io.javaweb.community.entity.PostEntity">
+		UPDATE `jw_post`
+		<set>
+			<if test="modifyDate != null">`modify_date` = #{modifyDate},</if>
+			<if test="essence != null">`essence` = #{essence},</if>
+			<if test="replyControl != null">`reply_control` = #{replyControl},</if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="title != null">`title` = #{title},</if>
+			<if test="type != null">`type` = #{type},</if>
+			<if test="content != null">`content` = #{content},</if>
+			<if test="sorted != null">`sorted` = #{sorted},</if>
+			<if test="top != null">`top` = #{top},</if>
+			<if test="anonymous != null">`anonymous` = #{anonymous},</if>
+			<if test="createUser != null">`create_user` = #{createUser},</if>
+			<if test="browse != null">`browse` = #{browse},</if>
+			<if test="createDate != null">`create_date` = #{createDate},</if>
+			<if test="status != null">`status` = #{status},</if>
+		</set>
+		WHERE
+			`post_id` = #{postId}
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="io.javaweb.community.entity.PostEntity">
+		UPDATE 
+			`jw_post`
+		SET
+			`modify_date` = #{modifyDate},
+			`essence` = #{essence},
+			`reply_control` = #{replyControl},
+			`remark` = #{remark},
+			`title` = #{title},
+			`type` = #{type},
+			`content` = #{content},
+			`sorted` = #{sorted},
+			`top` = #{top},
+			`anonymous` = #{anonymous},
+			`create_user` = #{createUser},
+			`browse` = #{browse},
+			`create_date` = #{createDate},
+			`status` = #{status}
+		WHERE
+			`post_id` = #{postId}
+	</update>
+	
+	<delete id="deleteByPrimaryKey"  parameterType="java.io.Serializable">
+		DELETE FROM `jw_post` WHERE `post_id` = #{postId}
+	</delete>
+	
+	<delete id="deleteByParamSelective" parameterType="io.javaweb.community.entity.PostEntity">
+		DELETE FROM `jw_post`
+		<where>
+			<if test="modifyDate != null">AND `modify_date` = #{modifyDate}</if>
+			<if test="essence != null">AND `essence` = #{essence}</if>
+			<if test="replyControl != null">AND `reply_control` = #{replyControl}</if>
+			<if test="remark != null">AND `remark` = #{remark}</if>
+			<if test="postId != null">AND `post_id` = #{postId}</if>
+			<if test="title != null">AND `title` = #{title}</if>
+			<if test="type != null">AND `type` = #{type}</if>
+			<if test="content != null">AND `content` = #{content}</if>
+			<if test="sorted != null">AND `sorted` = #{sorted}</if>
+			<if test="top != null">AND `top` = #{top}</if>
+			<if test="anonymous != null">AND `anonymous` = #{anonymous}</if>
+			<if test="createUser != null">AND `create_user` = #{createUser}</if>
+			<if test="browse != null">AND `browse` = #{browse}</if>
+			<if test="createDate != null">AND `create_date` = #{createDate}</if>
+			<if test="status != null">AND `status` = #{status}</if>
+		</where>
+	</delete>
+</mapper>

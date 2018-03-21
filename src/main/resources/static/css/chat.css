@@ -1,0 +1,106 @@
+.chat {
+  width: 100%;
+  height: 500px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 0;
+}
+.chat .chat-container {
+  min-height: 500px;
+  width: 100%;
+  padding: 10px 20px;
+}
+.chat .chat-container .chat-user {
+  margin-bottom: 10px;
+}
+.chat .chat-container .chat-user .img {
+  overflow: hidden;
+  width: 50px;
+  height: 50px;
+}
+.chat .chat-container .chat-user .img img {
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+}
+.chat .chat-container .chat-user .chat-content {
+  width: 100%;
+}
+.chat .chat-container .chat-user .chat-content .chat-page {
+  width: 100%;
+}
+.chat .chat-container .chat-user .chat-content .chat-page .user-name {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+.chat .chat-container .chat-user .chat-content .chat-page .chat-information .information-page {
+  display: inline-block;
+  border-radius: 5px;
+  background-color: #cdd7e2;
+  padding: 7px 10px;
+  color: #242424;
+  word-wrap: break-word;
+}
+.chat .chat-container .chat-user .chat-content .chat-page .chat-information .information-page img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+.chat .chat-container .chat-user.left .img {
+  margin-right: -100%;
+  float: left;
+}
+.chat .chat-container .chat-user.left .chat-content {
+  float: left;
+}
+.chat .chat-container .chat-user.left .chat-content .chat-page {
+  margin-left: 65px;
+}
+.chat .chat-container .chat-user.left .chat-content .chat-page .chat-information {
+  max-width: 80%;
+}
+.chat .chat-container .chat-user.right .img {
+  margin-left: -100%;
+  float: right;
+}
+.chat .chat-container .chat-user.right .chat-content {
+  float: right;
+}
+.chat .chat-container .chat-user.right .chat-content .chat-page {
+  float: right;
+  margin-right: 65px;
+}
+.chat .chat-container .chat-user.right .chat-content .chat-page .user-name {
+  text-align: right;
+}
+.chat .chat-container .chat-user.right .chat-content .chat-page .chat-information {
+  max-width: 100%;
+  text-align: right;
+}
+.chat .chat-container .chat-user.right .chat-content .chat-page .chat-information .information-page {
+  margin-left: 20%;
+  text-align: left;
+  max-width: 80%;
+}
+.chat .chat-container .chat-tip {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.chat .chat-container .chat-tip .tip {
+  display: inline;
+  padding: 5px 7px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  color: #fff;
+}
+.clearfix:after {
+  display: block;
+  clear: both;
+  content: "";
+  visibility: hidden;
+  height: 0;
+}
+.clearfix {
+  zoom: 1;
+}

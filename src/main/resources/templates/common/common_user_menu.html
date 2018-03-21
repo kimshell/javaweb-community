@@ -1,0 +1,36 @@
+<%
+	var userSession = userSession();
+%>
+
+<ul class="list-group">
+    <li class="list-group-item">
+    	<span class="glyphicon glyphicon-user"></span><a href="${ctxPath}/user/${userSession.user.userId}"> 个人主页</a>
+    	<%if(active == 'main'){%>
+    		<span class="glyphicon glyphicon-star" style="float: right;"></span>
+    	<%}%>
+    </li>
+    <li class="list-group-item">
+    	<span class="glyphicon glyphicon-cog"></span><a href="${ctxPath}/user/settings"> 资料设置</a>
+    	<%if(active == 'settings'){%>
+    		<span class="glyphicon glyphicon-star" style="float: right;"></span>
+    	<%}%>
+    </li>
+    <li class="list-group-item">
+    	<span class="glyphicon glyphicon-envelope"></span><a href="${ctxPath}/user/message"> 通知消息 <span class="badge"></span></a>
+    	<%if(active == 'message'){%>
+    		<span class="glyphicon glyphicon-star" style="float: right;"></span>
+    	<%}%>
+    </li>
+    <li class="list-group-item">
+    	<span class="glyphicon glyphicon-th-list"></span><a href="${ctxPath}/user/post"> 我的帖子</a>
+    	<%if(active == 'post'){%>
+    		<span class="glyphicon glyphicon-star" style="float: right;"></span>
+    	<%}%>
+    </li>
+    <li class="list-group-item">
+    	<span class="glyphicon glyphicon-heart"></span><a href="${ctxPath}/user/collections"> 我的收藏</a>
+    	<%if(active == 'collections'){%>
+    		<span class="glyphicon glyphicon-star" style="float: right;"></span>
+    	<%}%>
+    </li>
+</ul>

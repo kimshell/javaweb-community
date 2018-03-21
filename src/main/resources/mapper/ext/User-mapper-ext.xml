@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.UserMapper">
+
+	<resultMap id="BASE_RESULT_MAP" type="io.javaweb.community.entity.UserEntity">
+        <id column="userId" property="userId"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="pass" property="pass"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="gender" property="gender"/>
+        <result column="portrait" property="portrait"/>
+        <result column="personality" property="personality"/>
+        <result column="site" property="site"/>
+        <result column="github" property="github"/>
+        <result column="role" property="role"/>
+        <result column="emailVerifi" property="emailVerifi"/>
+        <result column="phoneVerifi" property="phoneVerifi"/>
+        <result column="loginRadio" property="loginRadio"/>
+        <result column="browseRadio" property="browseRadio"/>
+        <result column="replyRadio" property="replyRadio"/>
+        <result column="sessionId" property="sessionId"/>
+        <result column="createUser" property="createUser"/>
+        <result column="createDate" property="createDate"/>
+        <result column="modifyDate" property="modifyDate"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sorted" property="sorted"/>
+	</resultMap>
+	
+	<!-- 
+		根据账户检索出一个记录
+	 -->
+	<select id="queryByAccount" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.UserEntity">
+		SELECT
+			<include refid="io.javaweb.community.mapper.UserMapper.BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_user` t
+		WHERE
+			t.`email` = #{account}
+		OR
+			t.`name` = #{account}
+	</select>
+	
+	<!-- 根据名称模糊检索用户 -->
+	<select id="queryByLikeName" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.dto.UserDTO">
+		SELECT
+			t.user_id AS `userId`,
+			t.name AS `name`,
+			t.portrait AS `portrait`
+		FROM
+			`jw_user` t
+		WHERE
+			t.`name` LIKE CONCAT('%',#{name},'%')
+	</select>
+	
+	<resultMap type="io.javaweb.community.entity.dto.UserDTO" id="USER_RESULT_MAP_01" extends="BASE_RESULT_MAP">
+		<!-- 检索50条最近帖子 -->
+		<collection property="posts" ofType="io.javaweb.community.entity.dto.PostDTO" select="queryPostsByUserId" column="userId"/>
+		<!-- 检索50条最近回复 -->
+		<collection property="replys" ofType="io.javaweb.community.entity.dto.PostReplyDTO" select="queryPostReplysByUserId" column="userId"/>
+	</resultMap>
+	
+	<select id="queryUserInfoByUserId" parameterType="java.io.Serializable" resultMap="USER_RESULT_MAP_01">
+		SELECT
+			<include refid="io.javaweb.community.mapper.UserMapper.BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_user` t
+		WHERE
+			t.`user_id` = #{userId}
+	</select>
+	<select id="queryPostsByUserId" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.dto.PostDTO">
+		SELECT
+			<include refid="io.javaweb.community.mapper.PostMapper.BASE_FIELD">
+                <property name="alias" value="t"/>
+            </include>,
+            (SELECT COUNT(*) FROM `jw_post_reply` t2 WHERE t2.`post_id` = t.`post_id`) AS `replyCount`
+		FROM
+			`jw_post` t
+		WHERE
+			t.`create_user` = #{userId}
+		AND
+			t.`anonymous` = 0
+		AND
+			t.`status` = 'NORMAL'
+		ORDER BY `createDate` DESC LIMIT 50
+	</select>
+	
+	<resultMap type="io.javaweb.community.entity.dto.PostReplyDTO" id="POST_REPLY_RESULT_MAP_01" extends="io.javaweb.community.mapper.PostReplyMapper.BASE_RESULT_MAP">
+		<association property="post" columnPrefix="post_" javaType="io.javaweb.community.entity.dto.PostDTO">
+			<id column="postId" property="postId"/>
+			<result column="title" property="title"/>
+		</association>
+	</resultMap>
+	
+	<select id="queryPostReplysByUserId" resultMap="POST_REPLY_RESULT_MAP_01">
+		SELECT
+    		<include refid="io.javaweb.community.mapper.PostReplyMapper.BASE_FIELD">
+    			<property name="alias" value="t"/>
+    		</include>,
+    		t1.`post_id` AS `post_postId`,
+    		t1.`title` AS `post_title`
+    	FROM
+    		`jw_post_reply` t
+    		INNER JOIN `jw_post` t1 ON t1.`post_id` = t.`post_id`
+    	WHERE
+    		t.`create_user` = #{userId}
+    	AND
+    		t.`anonymous` = 0
+    	AND
+			t.`status` = 'NORMAL'
+    	ORDER BY `createDate` DESC LIMIT 50
+	</select>
+</mapper>

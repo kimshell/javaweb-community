@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <% include('/common/common_header.html'){}  %>
+	    <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+	    <title>Javaweb开发者社区</title>
+	    <style>
+	        a {
+	            color: #666;
+	            transition: all .3s;
+	        }
+	
+	        a:hover {
+	            color: #5cb85c;
+	            text-decoration: none;
+	        }
+	
+	        .media-body div.content {
+	            position: relative;
+	            color: #999;
+	        }
+	
+	        .media-body div.title {
+	            padding: 3px
+	        }
+	
+	        .media-body .title span {
+	            padding: 3px 5px;
+	            border: 1px solid;
+	            border-radius: 3px
+	        }
+	
+	        .media-body .content .time {
+	            margin-left: 15px
+	        }
+	
+	        .media-body .content .visit {
+	            position: absolute;
+	            bottom: 0;
+	            right: 0
+	        }
+	
+			span.discuss{	
+	        	color: #337ab7;
+	        	border-color: #337ab7;
+	        }
+	        span.help {	
+	            color: #5cb85c;
+	            border-color: #5cb85c;
+	        }
+	        span.leisure {	
+	            color: #5bc0de;
+	            border-color: #5bc0de;
+	        }
+	        span.notice {	
+	            color: #f0ad4e;
+	            border-color: #f0ad4e;
+	        }
+	        span.suggest  {	
+	            color: #d9534f;
+	            border-color: #d9534f;
+	        }
+	        
+	        span.anonymous	  {
+	            color: #000000	;
+	            border-color: #000000;
+	        }
+
+			.user-role {
+				display: inline-block;
+				color: #fff;
+				padding: 0px 5px 0px 5px;
+				font-weight: bold;
+				border-radius: 3px
+			}
+
+			.user-role-admin {
+				background: #449d44;
+				/**background: #FF5722;**/
+			}
+			
+			.user-role-manager {
+				background: #449d44;
+			}
+	        
+	    </style>
+	</head>
+	<body>
+		<% include('/common/common_body_header.html',{active:'index'}){} %>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-7 col-md-offset-1">
+				
+					<%if(!isEmpty(topPosts)){//置顶帖子开始%>
+					
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<span class="glyphicon glyphicon-arrow-up"></span> 置顶
+						    </div>
+						    <div class="panel-body">
+						    	<ul class="list-group" style="margin-top: 10px;">
+						    		
+						    		<%
+										for(var post in topPosts){
+											//图标定义
+											var color = '';
+											var type = '';
+											if(post.type == 'DISCUSS'){
+												color = 'discuss';
+												type = '技术交流';
+											}else if(post.type == 'HELP'){
+												color = 'help';
+												type = '求助问答';
+											}else if(post.type == 'LEISURE'){
+												color = 'leisure';
+												type = '休闲灌水';
+											}else if(post.type == 'NOTICE'){
+												color = 'notice';
+												type = '社区公告';
+											}else if(post.type == 'SUGGEST'){
+												color = 'suggest';
+												type = '建议/BUG';
+											}
+											
+											var userLink = ctxPath + '/user/' + post.author.userId;
+									%>
+								
+					                <li class="list-group-item">
+					                    <div class="">
+					                        <div class="media">
+					                            <div class="media-left">
+					                                <a href="${userLink}">
+														<img class="media-object img-rounded" style="width: 50px;height: 50px" src="${post.author.portrait}" onerror="this.src = '${ctxPath}/static/icon/green_200.png'">
+					                                </a>
+					                            </div>
+					                            <div class="media-body ">
+					                                <div class="title">
+					                                    <span class="${color}">${type}</span>
+					                                    <h4 class="media-heading" style="display: inline-block"><a href="${ctxPath}/post/${post.postId}">${post.title}</a></h4>
+					                                    <div style="float: right;">
+															<% if(post.essence){ %>
+															<span class="label label-primary">
+					                                    	    精品
+                                                            </span>
+															<%  } %>
+
+															<% if(post.replyCount >= 100 ){ //回复有超过100 %>
+					                                    		<span class="label label-danger">
+					                                    			热门
+					                                    		</span>
+					                                    	<%  } %>
+					                                    	
+					                                    	<% if(post.top){ %>
+					                                    		<span class="label label-warning">
+					                                    			置顶
+					                                    		</span>
+					                                    	<%  } %>
+					                                    	
+					                                    </div>
+					                                </div>
+					                                <div class="content">
+					                                    <a href="${userLink}">${post.author.name}</a>
+					                                    <%if(!post.anonymous){%>
+					                                    	<%if(post.author.role == 'ADMIN'){%>
+					                                    		<span class="user-role user-role-admin" >站长</span>
+					                                    	<%}else if(post.author.role == 'MANAGER'){%>
+					                                    		<span class="user-role user-role-manager" >管理员</span>
+					                                    	<%}%>
+					                                    <%}%>
+					                                    <span class="time" >${postDate(post.createDate)}</span>
+					                                    <span class="visit" >
+					                                        <span style="margin-right: 15px;"><i class="fa fa-eye"></i> ${post.browse}</span>
+					                                        <span><i class="fa fa-commenting-o"></i> ${post.replyCount}</span>
+					                                    </span>
+					                                </div>
+					                            </div>
+					                        </div>
+					                    </div>
+					                </li>
+					             
+							<%}%>
+						    		
+						    		
+						    	</ul>
+						    </div>
+						</div>
+					
+					
+					<%}//置顶帖子结束%>
+					
+					
+					<% //帖子banner开始
+					
+						//参数拼接
+						var queryString  = '';
+						if(!isEmpty(param.createUser)){
+							queryString = queryString + '&createUser=' + param.createUser;
+						}
+						if(!isEmpty(param.anonymous)){
+							queryString = queryString + '&anonymous=' + param.anonymous;
+						}
+					%>
+					<div class="panel panel-default">
+					    <div class="panel-body">
+							<ul class="nav nav-tabs nav-justified">
+								<li><a class="post-type" href="${ctxPath}/index${isEmpty(queryString)? '' : '?bestLanguage=java' + queryString}">所有</a></li>
+								<li><a class="post-type" href="${ctxPath}/discuss${isEmpty(queryString)? '' : '?bestLanguage=java' + queryString}">技术交流</a></li>
+								<li><a class="post-type" href="${ctxPath}/help${isEmpty(queryString)? '' : '?bestLanguage=java' + queryString}">求助问答</a></li>
+								<li><a class="post-type" href="${ctxPath}/leisure${isEmpty(queryString)? '' : '?bestLanguage=java' + queryString}">休闲灌水</a></li>
+								<li><a class="post-type" href="${ctxPath}/notice${isEmpty(queryString)? '' : '?bestLanguage=java' + queryString}">系统公告</a></li>
+								<li><a class="post-type" href="${ctxPath}/suggest${isEmpty(queryString)? '' : '?bestLanguage=java' + queryString}">建议/bug提交</a></li>
+							</ul>
+							<ul class="list-group" style="margin-top: 10px;">
+							<%
+								for(var post in posts){
+								
+									//图标定义
+									var color = '';
+									var type = '';
+									if(post.type == 'DISCUSS'){
+										color = 'discuss';
+										type = '技术交流';
+									}else if(post.type == 'HELP'){
+										color = 'help';
+										type = '求助问答';
+									}else if(post.type == 'LEISURE'){
+										color = 'leisure';
+										type = '休闲灌水';
+									}else if(post.type == 'NOTICE'){
+										color = 'notice';
+										type = '社区公告';
+									}else if(post.type == 'SUGGEST'){
+										color = 'suggest';
+										type = '建议/BUG';
+									}
+									
+									//匿名处理,屏蔽名称和头像
+									if(post.anonymous){
+										post.author.name = '匿名用户';
+										post.author.portrait = ctxPath + '/static/image/anonymous.png';
+										color = 'anonymous';
+									}
+									
+									var userLink = post.anonymous ? 'javascript:void(0);' : ctxPath + '/user/' + post.author.userId;
+							%>
+								
+					                <li class="list-group-item">
+					                    <div class="">
+					                        <div class="media">
+					                            <div class="media-left">
+					                                <a href="${userLink}">
+														<img class="media-object img-rounded" style="width: 50px;height: 50px" src="${post.author.portrait}" onerror="this.src = '${ctxPath}/static/icon/green_200.png'">
+					                                </a>
+					                            </div>
+					                            <div class="media-body ">
+					                                <div class="title">
+					                                    <span class="${color}">${type}</span>
+					                                    <h4 class="media-heading" style="display: inline-block"><a href="${ctxPath}/post/${post.postId}">${post.title}</a></h4>
+					                                    <div style="float: right;">
+
+															<% if(post.essence){ %>
+															<span class="label label-primary">
+					                                    	    精品
+                                                            </span>
+															<%  } %>
+
+															<% if(post.replyCount >= 100 ){ //回复有超过100 %>
+					                                    		<span class="label label-danger">
+					                                    			热门
+					                                    		</span>
+					                                    	<%  } %>
+					                                    	
+					                                    	<% if(post.top){ %>
+					                                    		<span class="label label-warning">
+					                                    			置顶
+					                                    		</span>
+					                                    	<%  } %>
+					                                    	
+					                                    </div>
+					                                </div>
+					                                <div class="content">
+					                                    <a href="${userLink}">${post.author.name}</a>
+					                                    <%if(!post.anonymous){%>
+					                                    	<%if(post.author.role == 'ADMIN'){%>
+					                                    		<span class="user-role user-role-admin" >站长</span>
+					                                    	<%}else if(post.author.role == 'MANAGER'){%>
+					                                    		<span class="user-role user-role-manager" >管理员</span>
+					                                    	<%}%>
+					                                    <%}%>
+					                                    <span class="time" >${postDate(post.createDate)}</span>
+					                                    <span class="visit" >
+					                                        <span style="margin-right: 15px;"><i class="fa fa-eye"></i> ${post.browse}</span>
+					                                        <span><i class="fa fa-commenting-o"></i> ${post.replyCount}</span>
+					                                    </span>
+					                                </div>
+					                            </div>
+					                        </div>
+					                    </div>
+					                </li>
+					             
+							<%}%>
+							</ul>
+							
+					    </div>
+					</div>
+					<% //帖子banner结束%>
+					
+					<%//分页开始%>
+					<div style="text-align: center;">
+						
+						<ul class="pagination ">
+							<%
+								var begin = 0;
+								var end = 0;
+								if(pageInfo.totalPage <= 10){
+									begin = 1;
+									end = pageInfo.totalPage;
+								}else{
+									begin = pageInfo.page - 5;
+									end = pageInfo.page + 4;
+									if(begin < 1){
+										begin = 1;
+										end = 10;
+									}
+									if(end > pageInfo.totalPage){
+										begin = pageInfo.totalPage - 9;
+										end = pageInfo.totalPage;
+									}	
+								}
+							%>
+							
+							<% if(begin > 1){%>
+								<li><a href="${ctxPath}/${postType}?page=1${queryString}">首页</a></li>
+							<%}%>
+							
+							<% if(pageInfo.page > 1){ %>
+								<li><a href="${ctxPath}/${postType}?page=${pageInfo.page - 1}${queryString}">上一页</a></li>
+							<%}%>
+							
+							<% 	for(var i = begin ; i <= end; i++){ %>
+									<li ${pageInfo.page == i ? 'class="active"'}><a href="${pageInfo.page == i ? 'javascript:void(0);':ctxPath + '/' + postType + '?page=' + i + queryString} " >${i}</a></li>
+							<% }	%>
+							 
+							 <% if(pageInfo.totalPage > pageInfo.page){ %>
+								<li><a href="${ctxPath}/${postType}?page=${pageInfo.page + 1}${queryString}">下一页</a></li>
+							<%}%>
+							
+							<% if(pageInfo.totalPage > end ){%>
+								<li><a href="${ctxPath}/${postType}?page=${pageInfo.totalPage}${queryString}">尾页</a></li>
+							<%}%>
+						</ul>
+					</div>
+					<%//分页结束 %>
+				</div>
+				<% include('/common/common_right_menu.html',{}){} %>
+			</div>
+		</div>
+		
+
+		
+		<% include('/common/common_footer.html',{}){} %>
+	</body>
+	<% include('/common/common_script.html',{}){} %>
+	<script type="text/javascript">
+		$(function(){
+			var location = window.location.href;
+			var uri = location.substring(location.lastIndexOf('/'))
+			if(uri == '/'){
+				uri = '/index';
+			}
+			$('.post-type').each(function(){
+				var href = $(this).attr('href');
+				if(uri.indexOf(href) != -1){
+					$(this).parent().addClass('active');
+					//$(this).attr({'href':'#'})
+				}
+			});
+		});
+	</script>
+</html>

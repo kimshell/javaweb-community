@@ -1,0 +1,3 @@
+# javaweb.io robots.txt
+User-agent:*
+Allow:/

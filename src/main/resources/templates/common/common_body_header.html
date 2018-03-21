@@ -1,0 +1,114 @@
+<!-- header -->
+
+<div class="container-fluid" style="margin-top: 10px;">
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+			<nav class="navbar navbar-default " role="navigation"> 
+			    <div class="container-fluid"> 
+			        <div class="navbar-header"> 
+			            <a class="navbar-brand" href="${ctxPath}/index">Javaweb Developer</a> 
+			        </div> 
+			        
+					<ul class="nav navbar-nav">
+						<li class="${active == 'index' ? 'active'}">
+							<a href="${ctxPath}/index">
+								<span class="glyphicon glyphicon-list"></span> 交流
+							</a>
+						</li>
+						<li class="${active == 'now' ? 'active'}">
+							<a href="${ctxPath}/now">
+								<span class="glyphicon glyphicon-time"></span> 此刻
+							</a>
+						</li>
+						
+						<li class="${active == 'chat' ? 'active'}">
+							<a href="${ctxPath}/chat">
+								<span class="glyphicon glyphicon-pencil"></span> 聊天
+							</a>
+						</li>
+						
+						<li>
+							<form class="navbar-form navbar-left" role="search" onsubmit="layer.msg('开发ing...');return false;">
+					            <div class="form-group">
+					                <input type="text" class="form-control" name="kw" placeholder="输入关键字">
+					            </div>
+					            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> 搜索</button>
+					        </form>
+						</li> 
+					</ul>
+					
+					<ul class="nav navbar-nav navbar-right"> 
+						<%
+							var userSession = userSession();
+							if(userSession != null){
+						%>
+								<li>
+									<img src="${userSession.user.portrait}" class="img-circle user-portrait-img" width="50px;" height="50px;" onerror="this.src = '${ctxPath}/static/icon/green_200.png'"/>
+								</li>
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+										${userSession.user.name} <span class="badge"></span>
+										<b class="caret"></b>
+									</a>
+									<ul class="dropdown-menu">
+										<li>
+											<a href="${ctxPath}/user/${userSession.user.userId}"><span class="glyphicon glyphicon-user"></span> 个人主页</a>
+										</li>
+										<li class="divider"></li>
+										<li>
+											<a href="${ctxPath}/user/settings"><span class="glyphicon glyphicon-cog"></span> 资料设置</a>
+										</li>
+										<li class="divider"></li>
+										<li>
+											<a href="${ctxPath}/user/message"><span class="glyphicon glyphicon-envelope"></span> 通知消息 <span class="badge"></span></a>
+										</li>
+										<li class="divider"></li>
+										<li>
+											<a href="${ctxPath}/user/post"><span class="glyphicon glyphicon-th-list"></span> 我的帖子</a>
+										</li>
+										<li class="divider"></li>
+										<li>
+											<a href="${ctxPath}/user/collections"><span class="glyphicon glyphicon-heart"></span> 我的收藏</a>
+										</li>
+										<li class="divider"></li>
+										<li>
+											<a href="javascript:sessionStorage.clear();window.location.href='${ctxPath}/logout';"><span class="glyphicon glyphicon-log-out"></span> 退出登录</a>
+										</li>
+									</ul>
+								</li>
+							
+						<%
+							}else{
+						%>
+								<li class="${active == 'login' ? 'active'}">
+					        		<a href="${ctxPath}/login">
+					        			<span class="glyphicon glyphicon-log-in"></span> 登录
+					        		</a>
+					        	</li>
+					            <li class="${active == 'register' ? 'active'}">
+					            	<a href="${ctxPath}/register">
+					            		<span class="glyphicon glyphicon-user"></span> 注册
+					            	</a>
+					            </li> 
+						<%
+							}
+						%>
+						
+			        	
+			            
+						
+						
+						
+			        </ul> 
+					
+					
+					
+			        
+			        
+			    </div> 
+			</nav>
+		</div>
+	</div>
+</div>
+
+<!-- header -->

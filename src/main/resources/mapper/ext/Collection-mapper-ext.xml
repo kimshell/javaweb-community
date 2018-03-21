@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.CollectionMapper">
+
+    <resultMap id="BASE_RESULT_MAP" type="io.javaweb.community.entity.CollectionEntity">
+        <id column="collectionId" property="collectionId"/>
+        <result column="postId" property="postId"/>
+        <result column="createUser" property="createUser"/>
+        <result column="createDate" property="createDate"/>
+        <result column="modifyDate" property="modifyDate"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sorted" property="sorted"/>
+    </resultMap>
+
+    <resultMap id="RESULT_MAP_01" type="io.javaweb.community.entity.dto.CollectionDTO" extends="BASE_RESULT_MAP">
+        <association property="post" javaType="io.javaweb.community.entity.PostEntity" columnPrefix="post_">
+            <id column="postId" property="postId"/>
+            <result column="title" property="title"/>
+        </association>
+    </resultMap>
+
+	<select id="queryCollectionsByCreateUser" parameterType="io.javaweb.community.entity.dto.CollectionDTO" resultMap="RESULT_MAP_01">
+        SELECT
+            <include refid="io.javaweb.community.mapper.CollectionMapper.BASE_FIELD">
+                <property name="alias" value="t"/>
+            </include>,
+            t1.`title` AS `post_title`,
+            t1.`post_id` AS `post_postId`
+        FROM
+            `jw_collection` t
+            INNER JOIN `jw_post` t1 ON t1.`post_id` = t.`post_id`
+        WHERE
+            t.`create_user` = #{createUser}
+	</select>
+</mapper>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include('/common/common_header.html'){}  %>
+        <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+        <title>消息通知</title>
+    </head>
+    <body>
+		<% include('/common/common_body_header.html',{active:'none'}){} %>
+		
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2 col-md-offset-1" >
+					<% include('/common/common_user_menu.html',{active:'message'}){} %>
+				</div>
+				
+				<div class="col-md-8">
+					
+					
+					
+					<form id="form" onsubmit="return false;">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th><input type="checkbox"/></th>
+									<th>通知</th>
+									<th>时间</th>
+									<th>状态</th>
+								</tr>
+							</thead>
+							<tbody>
+							
+								<% for(var message in messages){ %>
+									<tr>
+										<td><input name="messageId" type="checkbox" value="${message.messageId}"/></td>
+										<td>
+										
+											<%
+												var userLink = ctxPath + '/user/' + message.author.userId;	
+												var userName = message.author.name;	
+												var userPortrait = message.author.portrait;
+												
+												if(message.post != null && message.post.anonymous){	
+													if(message.type == 'POST_AT'){
+														userLink = 'javascript:void(0);';
+														userPortrait = ctxPath + '/static/image/anonymous.png';
+														userName = '匿名用户';
+													}	
+												}
+												
+												if(message.reply != null && message.reply.anonymous){	
+													if(message.type == 'REPLY_AT' || message.type == 'REPLY_REPLY' || message.type == 'POST_REPLY'){
+														userLink = 'javascript:void(0);';
+														userPortrait = ctxPath + '/static/image/anonymous.png';
+														userName = '匿名用户';
+													}	
+												}
+												
+											%>
+											
+										
+											<%if(message.type == 'POST_REPLY'){	//帖子评论%>
+												<a target="_blank" href="${userLink}"><img class="img-rounded" src="${userPortrait}" width="50px;" height="50px;"/> ${userName}</a> 回复了 
+												<a class="target" target="_blank" href="${ctxPath}/post/${message.post.postId}?page=${message.reply.page}${!message.isRead ? '&messageId=' + message.messageId}#reply-${message.reply.replyId}">${message.post.title}</a>
+											<%}else if(message.type == 'REPLY_REPLY'){//评论回复%>
+												<a target="_blank" href="${userLink}"><img class="img-rounded"  src="${userPortrait}" width="50px;" height="50px;"/> ${userName}</a> 在 
+												<a class="target" target="_blank" href="${ctxPath}/post/${message.post.postId}?page=${message.reply.page}${!message.isRead ? '&messageId=' + message.messageId}#reply-${message.reply.replyId}">${message.post.title}</a> 中回复了您。
+											<%}else if(message.type == 'POST_AT'){//帖子艾特%>
+												<a target="_blank" href="${userLink}"><img class="img-rounded"  src="${userPortrait}" width="50px;" height="50px;"/> ${userName}</a> 在
+												<a class="target" target="_blank" href="${ctxPath}/post/${message.post.postId}${!message.isRead ? '?messageId=' + message.messageId}#at-${message.atAnchor}">${message.post.title}</a> 中提到了您。
+											<%}else if(message.type == 'REPLY_AT'){//回复艾特%>
+												<a target="_blank" href="${userLink}"><img class="img-rounded"  src="${userPortrait}" width="50px;" height="50px;"/> ${userName}</a> 在
+												<a class="target" target="_blank" href="${ctxPath}/post/${message.post.postId}?page=${message.reply.page}${!message.isRead ? '&messageId=' + message.messageId}#at-${message.atAnchor}">${message.post.title}</a> 的回复中提到了您。
+											<%}else if(message.type == 'REPLY_AGREE'){//回复顶%>
+												<a target="_blank" href="${userLink}"><img class="img-rounded"  src="${userPortrait}" width="50px;" height="50px;"/> ${userName}</a> 在
+												<a class="target" target="_blank" href="${ctxPath}/post/${message.post.postId}?page=${message.reply.page}${!message.isRead ? '&messageId=' + message.messageId}#reply-${message.reply.replyId}">${message.post.title}</a> 中对您的回复发表了态度。
+												<span style="color: red;"><i class="fa fa-thumbs-up"></i></span>
+											<%}else if(message.type == 'REPLY_DIS_AGREE'){//回复踩%>
+												<a target="_blank" href="${userLink}"><img class="img-rounded"  src="${userPortrait}" width="50px;" height="50px;"/> ${userName}</a> 在
+												<a class="target" target="_blank" href="${ctxPath}/post/${message.post.postId}?page=${message.reply.page}${!message.isRead ? '&messageId=' + message.messageId}#reply-${message.reply.replyId}">${message.post.title}</a> 中对您的回复发表了态度。
+												<span><i class="fa fa-thumbs-down"></i></span>
+											<%}else if(message.type == 'POST_AGREE'){//帖子顶%>
+												<a target="_blank" href="${userLink}"><img class="img-rounded"  src="${userPortrait}" width="50px;" height="50px;"/> ${userName}</a> 对
+												<a class="target" target="_blank" href="${ctxPath}/post/${message.post.postId}${!message.isRead ? '?messageId=' + message.messageId}">${message.post.title}</a>发表了态度
+												<span style="color: red;"><i class="fa fa-thumbs-up"></i></span>			
+											<%}else if(message.type == 'POST_DIS_AGREE'){//帖子踩%>
+												<a target="_blank" href="${userLink}"><img class="img-rounded"  src="${userPortrait}" width="50px;" height="50px;"/> ${userName}</a> 对
+												<a class="target" target="_blank" href="${ctxPath}/post/${message.post.postId}${!message.isRead ? '?messageId=' + message.messageId}">${message.post.title}</a>发表了态度
+												<span><i class="fa fa-thumbs-down"></i></span>
+											<%}%>
+										</td>
+										<td>${message.createDate,"yyyy-MM-dd HH:mm:ss"}</td>
+										<td>
+											<%if(!message.isRead){%>
+												<span class="label label-success">未读</span>
+											<%}else{%>
+												<span class="label label-default">已读</span>
+											<%}%>
+										</td>
+									</tr>
+								<% } %>
+							</tbody>
+						</table>
+					</form>
+					
+					<div style="text-align: right;">
+						<button id="batch-reading" class="btn btn-detault">批量已读</button>
+						<button id="batch-delete" class="btn btn-danger">批量删除</button>
+					</div>
+						
+					<%//分页开始%>
+					<div style="text-align: center;">
+						
+						<ul class="pagination ">
+							<%
+								var begin = 0;
+								var end = 0;
+								if(pageInfo.totalPage <= 10){
+									begin = 1;
+									end = pageInfo.totalPage;
+								}else{
+									begin = pageInfo.page - 5;
+									end = pageInfo.page + 4;
+									if(begin < 1){
+										begin = 1;
+										end = 10;
+									}
+									if(end > pageInfo.totalPage){
+										begin = pageInfo.totalPage - 9;
+										end = pageInfo.totalPage;
+									}	
+								}
+							%>
+							
+							<% if(begin > 1){%>
+								<li><a href="${ctxPath}/user/message?page=1">首页</a></li>
+							<%}%>
+							
+							<% if(pageInfo.page > 1){ %>
+								<li><a href="${ctxPath}/user/message?page=${pageInfo.page - 1}">上一页</a></li>
+							<%}%>
+							
+							<% 	for(var i = begin ; i <= end; i++){ %>
+									<li ${pageInfo.page == i ? 'class="active"'}><a href="${pageInfo.page == i ? 'javascript:void(0);':ctxPath + '/user/message?page=' + i} " >${i}</a></li>
+							<% }	%>
+							 
+							 <% if(pageInfo.totalPage > pageInfo.page){ %>
+								<li><a href="${ctxPath}/user/message?page=${pageInfo.page + 1}">下一页</a></li>
+							<%}%>
+							
+							<% if(pageInfo.totalPage > end ){%>
+								<li><a href="${ctxPath}/user/message?page=${pageInfo.totalPage}">尾页</a></li>
+							<%}%>
+						</ul>
+					</div>
+					<%//分页结束 %>
+					
+					
+					
+				</div>
+			</div>
+		</div>
+		
+		
+		<% include('/common/common_footer.html',{}){} %>
+    </body>
+	<% include('/common/common_script.html',{}){} %>
+    <script>
+	    $(function () {
+	    	$(":checkbox:first").click(function(i){
+	    		$('[name=messageId]:checkbox').prop('checked', this.checked);
+	    	});
+	    	
+	    	$('#batch-delete').click(function(){
+	    		if($(this).hasClass('disabled')){
+					return;
+				}
+	    		var form = $('#form').serializeArray();
+	    		if(form.length == 0){
+	    			layer.msg('请选择需要删除的记录');
+	    			return;
+	    		}
+	    		layer.confirm('确定要删除吗?',{
+						btn: ['确定','取消']
+	    			}, function(index){
+	    				$('#batch-delete').addClass('disabled');
+	        			$('#batch-delete').text('执行中... ...')
+						//layer.close(index)
+						layer.load(2);
+	    				$.ajax({
+	    	    			url:'/message/delete',
+	    	    			method:'POST',
+	    	    			data:form,
+	    	    			dataType:'JSON',
+	    	    			success:function(response){
+	    	    				if(response.success){
+	    	    					window.location.reload();
+	    	    				}else{
+	    	    					layer.closeAll();
+	    	    					layer.msg(response.message);
+	    	    					$('#batch-delete').removeClass('disabled');
+	    		        			$('#batch-delete').text('批量删除');
+	    	    				}
+	    	    			}
+	    	    		});
+	    			}, function(){
+    			});
+	    	});
+	    	
+	    	//重复造轮子开始
+	    	$('#batch-reading').click(function(){
+	    		if($(this).hasClass('disabled')){
+					return;
+				}
+	    		var form = $('#form').serializeArray();
+	    		if(form.length == 0){
+	    			layer.msg('请选择需要修改的记录');
+	    			return;
+	    		}
+	    		layer.confirm('确定要设置为已读吗?',{
+						btn: ['确定','取消']
+	    			}, function(index){
+	    				$('#batch-reading').addClass('disabled');
+	        			$('#batch-reading').text('执行中... ...')
+						//layer.close(index)
+						layer.load(2);
+	    				$.ajax({
+	    	    			url:'/message/reding',
+	    	    			method:'POST',
+	    	    			data:form,
+	    	    			dataType:'JSON',
+	    	    			success:function(response){
+	    	    				if(response.success){
+	    	    					window.location.reload();
+	    	    				}else{
+	    	    					layer.closeAll();
+	    	    					layer.msg(response.message);
+	    	    					$('#batch-reading').removeClass('disabled');
+	    		        			$('#batch-reading').text('批量已读');
+	    	    				}
+	    	    			}
+	    	    		});
+	    			}, function(){
+    			});
+	    	});
+	    	
+	    	//点击通知后,页面渲染已读标识
+	    	$('.target').click(function(node){
+	    		var span = $(this).parent().parent().children().last().children();
+	    		if(span.hasClass('label-success')){
+	    			span.removeClass('label-success');
+	    			span.addClass('label-default');
+	    			span.text('已读');
+	    		}
+	    	});
+	    })
+    </script>
+</html>

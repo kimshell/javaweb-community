@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<% include('/common/common_header.html'){}  %>
+		<title>一点点小意外</title>
+	</head>
+	<body>
+		<% include('/common/common_body_header.html',{active:'null'}){} %>
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<h2>${message.message!}</h2>
+					<%if(message.status == 'EMAIL_NOT_VERIFY'){		//邮箱未认证%>
+						<a href="${ctxPath}/activation/send">点击发送验证邮件</a>		
+					<%}%>
+					<div style="text-align: center;">
+						<%if(message.status == 'BAD_URL' || message.status == 'NOT_FOUND'){				//404加载图片%>
+							<img src="${ctxPath}/static/image/404.jpg">
+						<%}%>
+						
+						<%if(message.status == 'POST_IS_DISABLED'){		//帖子被屏蔽%>
+						<%}%>
+						
+						<%if(message.status == 'EMAIL_NOT_VERIFY'){		//邮箱未认证%>
+							
+						<%}%>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		
+
+		<% include('/common/common_footer.html',{}){} %>
+	</body>
+	<% include('/common/common_script.html',{}){} %>
+	<script type="text/javascript">
+		
+	</script>
+</html>

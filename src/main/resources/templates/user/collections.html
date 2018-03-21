@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include('/common/common_header.html'){}  %>
+        <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+        <title>我的收藏</title>
+    </head>
+    <body>
+		<% include('/common/common_body_header.html',{active:'none'}){} %>
+		
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2 col-md-offset-1" >
+					<% include('/common/common_user_menu.html',{active:'collections'}){} %>
+				</div>
+				
+				<div class="col-md-8">
+					
+					<form id="form" onsubmit="return false;">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th><input type="checkbox"/></th>
+									<th>标题</th>
+									<th>收藏时间</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+							
+								<% for(var collection in collections){ %>
+									<tr>
+										<td><input name="postId" type="checkbox" value="${collection.post.postId}"/></td>
+										<td><a target="_blank" href="${ctxPath}/post/${collection.post.postId}">${collection.post.title}</a></td>
+										<td>${collection.createDate,"yyyy-MM-dd HH:mm:ss"}</td>
+										<td>
+											<button class="remove-btn btn btn-xs btn-danger" data-options="${collection.post.postId}">取消收藏</button>
+										</td>
+									</tr>
+								<% } %>
+							</tbody>
+						</table>
+					</form>
+					<div style="text-align: right;">
+						<button id="removeCollection" class="btn btn-danger">批量取消收藏</button>
+					</div>
+					<%//分页开始%>
+					<div style="text-align: center;">
+						
+						<ul class="pagination ">
+							<%
+								var begin = 0;
+								var end = 0;
+								if(pageInfo.totalPage <= 10){
+									begin = 1;
+									end = pageInfo.totalPage;
+								}else{
+									begin = pageInfo.page - 5;
+									end = pageInfo.page + 4;
+									if(begin < 1){
+										begin = 1;
+										end = 10;
+									}
+									if(end > pageInfo.totalPage){
+										begin = pageInfo.totalPage - 9;
+										end = pageInfo.totalPage;
+									}	
+								}
+							%>
+							
+							<% if(begin > 1){%>
+								<li><a href="${ctxPath}/user/collections?page=1">首页</a></li>
+							<%}%>
+							
+							<% if(pageInfo.page > 1){ %>
+								<li><a href="${ctxPath}/user/collections?page=${pageInfo.page - 1}">上一页</a></li>
+							<%}%>
+							
+							<% 	for(var i = begin ; i <= end; i++){ %>
+									<li ${pageInfo.page == i ? 'class="active"'}><a href="${pageInfo.page == i ? 'javascript:void(0);':ctxPath + '/user/collections?page=' + i} " >${i}</a></li>
+							<% }	%>
+							 
+							 <% if(pageInfo.totalPage > pageInfo.page){ %>
+								<li><a href="${ctxPath}/user/collections?page=${pageInfo.page + 1}">下一页</a></li>
+							<%}%>
+							
+							<% if(pageInfo.totalPage > end ){%>
+								<li><a href="${ctxPath}/user/collections?page=${pageInfo.totalPage}">尾页</a></li>
+							<%}%>
+						</ul>
+					</div>
+					<%//分页结束 %>
+						
+				</div>
+			</div>
+		</div>
+		
+		
+		<% include('/common/common_footer.html',{}){} %>
+    </body>
+	<% include('/common/common_script.html',{}){} %>
+    <script>
+	    $(function () {
+	    	
+	    	$(":checkbox:first").click(function(i){
+	    		$('[name=postId]:checkbox').prop('checked', this.checked);
+	    	});
+	    	
+	    	$('.remove-btn').click(function(){
+	    		var btn = this;
+	    		layer.confirm('确定要取消收藏吗?',{
+						btn: ['确定','取消']
+	    			}, function(index){
+	    				$(btn).addClass('disabled');
+	        			$(btn).text('执行中...')
+						//layer.close(index)
+						layer.load(2);
+	    				$.ajax({
+	    	    			url:'/collection/remove',
+	    	    			method:'POST',
+	    	    			data:'postId=' + $(btn).attr('data-options'),
+	    	    			dataType:'JSON',
+	    	    			success:function(response){
+	    	    				if(response.success){
+	    	    					window.location.reload();
+	    	    				}else{
+	    	    					layer.closeAll();
+	    	    					layer.msg(response.message);
+	    	    					$(btn).removeClass('disabled');
+	    		        			$(btn).text('取消收藏');
+	    	    				}
+	    	    			}
+	    	    		});
+	    			}, function(){
+	    				
+	    		});
+	    	});
+	    	
+	    	$('#removeCollection').click(function(){
+	    		if($(this).hasClass('disabled')){
+					return;
+				}
+	    		var form = $('#form').serializeArray();
+	    		if(form.length == 0){
+	    			layer.msg('请选择需要取消收藏的记录');
+	    			return;
+	    		}
+	    		layer.confirm('确定要取消收藏吗?',{
+    					btn: ['确定','取消']
+	    			}, function(index){
+	    				$('#removeCollection').addClass('disabled');
+	        			$('#removeCollection').text('执行中... ...')
+						//layer.close(index)
+						layer.load(2);
+	    				$.ajax({
+	    	    			url:'/collection/remove',
+	    	    			method:'POST',
+	    	    			data:form,
+	    	    			dataType:'JSON',
+	    	    			success:function(response){
+	    	    				if(response.success){
+	    	    					window.location.reload();
+	    	    				}else{
+	    	    					layer.closeAll();
+	    	    					layer.msg(response.message);
+	    	    					$('#removeCollection').removeClass('disabled');
+	    		        			$('#removeCollection').text('批量取消收藏');
+	    	    				}
+	    	    			}
+	    	    		});
+	    			}, function(){
+	    				
+	    		});
+	    	});
+	    })
+    </script>
+</html>

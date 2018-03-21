@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<% include('/common/common_header.html'){}  %>
+		<title>重置登录密码</title>
+	</head>
+	<body>
+		<% include('/common/common_body_header.html',{active:'null'}){} %>
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-4 col-md-offset-4">
+				
+					<div class="panel panel-default">
+				    	<div class="panel-body">
+					    	<form class="form-horizontal" role="form" id="form">
+								<input type="hidden" name="code" value="${code}"/>
+								<input type="hidden" name="userId" value="${userId}"/>
+								<div class="form-group">
+									<label for="password" class="col-sm-3 control-label" style="text-align: left;">新的登录密码</label>
+									<div class="col-sm-9">
+										<input type="password" id="password" class="form-control" name="password" placeholder="请输入新的登录密码">
+									</div>
+								</div>
+							</form>
+							<div>
+								<button id="forgetpass-btn" class="btn btn-default btn-block">
+									<span class="glyphicon glyphicon-ok-circle"></span> 重置密码
+								</button>
+							</div>
+				    	</div>
+			    	</div>
+					
+				</div>
+			</div>
+		</div>
+		<% include('/common/common_footer.html',{}){} %>
+	</body>
+	<% include('/common/common_script.html',{}){} %>
+	<script type="text/javascript">
+		$(function(){
+			$('#forgetpass-btn').click(function(){
+				var formData = $('#form').serializeArray();
+				
+				if(!new RegExp("^[^\\u4e00-\\u9fa5\\s]{6,16}$").test(formData[formData.length - 1].value)){
+					layer.msg('密码格式不正确,不能有汉字或者空格 6 - 16位');
+					return;
+    			}
+				layer.load(2);
+				$.ajax({
+					url:'${ctxPath}/forgetpass/reset',
+					data:formData,
+					method:'POST',
+					success:function(rep){
+						layer.closeAll();
+						if(rep.success){
+							window.location.href = "${ctxPath}/login";
+						}else{
+							layer.alert(rep.message, {
+								skin: 'layui-layer-lan',
+								closeBtn: 0
+	            			});
+						}
+					}
+				});
+			});
+		});
+	</script>
+</html>

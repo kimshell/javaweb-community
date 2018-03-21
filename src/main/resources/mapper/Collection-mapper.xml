@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.CollectionMapper">
+
+	<sql id="BASE_FIELD">
+		`${alias}`.`sorted` AS `sorted`,
+		`${alias}`.`modify_date` AS `modifyDate`,
+		`${alias}`.`create_user` AS `createUser`,
+		`${alias}`.`remark` AS `remark`,
+		`${alias}`.`post_id` AS `postId`,
+		`${alias}`.`collection_id` AS `collectionId`,
+		`${alias}`.`create_date` AS `createDate`,
+		`${alias}`.`status` AS `status`
+	</sql>
+	
+	<sql id="BASE_SELECT">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_collection` AS `t`
+		<where>
+			<if test="sorted != null">AND t.`sorted` = #{sorted}</if>
+			<if test="modifyDate != null">AND t.`modify_date` = #{modifyDate}</if>
+			<if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+			<if test="remark != null">AND t.`remark` = #{remark}</if>
+			<if test="postId != null">AND t.`post_id` = #{postId}</if>
+			<if test="collectionId != null">AND t.`collection_id` = #{collectionId}</if>
+			<if test="createDate != null">AND t.`create_date` = #{createDate}</if>
+			<if test="status != null">AND t.`status` = #{status}</if>
+		</where>	
+	</sql>
+	
+	<select id="queryByPrimaryKey" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.CollectionEntity">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_collection` AS `t`
+		WHERE
+			t.`collection_id` = #{collectionId}
+	</select>
+	
+	<select id="queryByParamSelective" parameterType="io.javaweb.community.entity.CollectionEntity" resultType="io.javaweb.community.entity.CollectionEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<select id="queryByParamSelectiveSole" parameterType="io.javaweb.community.entity.CollectionEntity" resultType="io.javaweb.community.entity.CollectionEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<insert id="create" parameterType="io.javaweb.community.entity.CollectionEntity" >
+		INSERT INTO 
+			`jw_collection`
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="sorted != null">`sorted`,</if>
+			<if test="modifyDate != null">`modify_date`,</if>
+			<if test="createUser != null">`create_user`,</if>
+			<if test="remark != null">`remark`,</if>
+			<if test="postId != null">`post_id`,</if>
+			<if test="collectionId != null">`collection_id`,</if>
+			<if test="createDate != null">`create_date`,</if>
+			<if test="status != null">`status`,</if>
+		</trim>
+		<trim prefix=" VALUES(" suffix=")" suffixOverrides=",">
+			<if test="sorted != null">#{sorted},</if>
+			<if test="modifyDate != null">#{modifyDate},</if>
+			<if test="createUser != null">#{createUser},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="postId != null">#{postId},</if>
+			<if test="collectionId != null">#{collectionId},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="status != null">#{status},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="io.javaweb.community.entity.CollectionEntity">
+		UPDATE `jw_collection`
+		<set>
+			<if test="sorted != null">`sorted` = #{sorted},</if>
+			<if test="modifyDate != null">`modify_date` = #{modifyDate},</if>
+			<if test="createUser != null">`create_user` = #{createUser},</if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="postId != null">`post_id` = #{postId},</if>
+			<if test="createDate != null">`create_date` = #{createDate},</if>
+			<if test="status != null">`status` = #{status},</if>
+		</set>
+		WHERE
+			`collection_id` = #{collectionId}
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="io.javaweb.community.entity.CollectionEntity">
+		UPDATE 
+			`jw_collection`
+		SET
+			`sorted` = #{sorted},
+			`modify_date` = #{modifyDate},
+			`create_user` = #{createUser},
+			`remark` = #{remark},
+			`post_id` = #{postId},
+			`create_date` = #{createDate},
+			`status` = #{status}
+		WHERE
+			`collection_id` = #{collectionId}
+	</update>
+	
+	<delete id="deleteByPrimaryKey"  parameterType="java.io.Serializable">
+		DELETE FROM `jw_collection` WHERE `collection_id` = #{collectionId}
+	</delete>
+	
+	<delete id="deleteByParamSelective" parameterType="io.javaweb.community.entity.CollectionEntity">
+		DELETE FROM `jw_collection`
+		<where>
+			<if test="sorted != null">AND `sorted` = #{sorted}</if>
+			<if test="modifyDate != null">AND `modify_date` = #{modifyDate}</if>
+			<if test="createUser != null">AND `create_user` = #{createUser}</if>
+			<if test="remark != null">AND `remark` = #{remark}</if>
+			<if test="postId != null">AND `post_id` = #{postId}</if>
+			<if test="collectionId != null">AND `collection_id` = #{collectionId}</if>
+			<if test="createDate != null">AND `create_date` = #{createDate}</if>
+			<if test="status != null">AND `status` = #{status}</if>
+		</where>
+	</delete>
+</mapper>

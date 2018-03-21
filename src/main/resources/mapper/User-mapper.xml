@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.UserMapper">
+
+	<sql id="BASE_FIELD">
+		`${alias}`.`browse_radio` AS `browseRadio`,
+		`${alias}`.`github` AS `github`,
+		`${alias}`.`role` AS `role`,
+		`${alias}`.`modify_date` AS `modifyDate`,
+		`${alias}`.`gender` AS `gender`,
+		`${alias}`.`pass` AS `pass`,
+		`${alias}`.`login_radio` AS `loginRadio`,
+		`${alias}`.`email_verifi` AS `emailVerifi`,
+		`${alias}`.`remark` AS `remark`,
+		`${alias}`.`session_id` AS `sessionId`,
+		`${alias}`.`portrait` AS `portrait`,
+		`${alias}`.`user_id` AS `userId`,
+		`${alias}`.`sorted` AS `sorted`,
+		`${alias}`.`site` AS `site`,
+		`${alias}`.`personality` AS `personality`,
+		`${alias}`.`phone` AS `phone`,
+		`${alias}`.`reply_radio` AS `replyRadio`,
+		`${alias}`.`name` AS `name`,
+		`${alias}`.`create_user` AS `createUser`,
+		`${alias}`.`phone_verifi` AS `phoneVerifi`,
+		`${alias}`.`email` AS `email`,
+		`${alias}`.`age` AS `age`,
+		`${alias}`.`status` AS `status`,
+		`${alias}`.`create_date` AS `createDate`
+	</sql>
+	
+	<sql id="BASE_SELECT">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_user` AS `t`
+		<where>
+			<if test="browseRadio != null">AND t.`browse_radio` = #{browseRadio}</if>
+			<if test="github != null">AND t.`github` = #{github}</if>
+			<if test="role != null">AND t.`role` = #{role}</if>
+			<if test="modifyDate != null">AND t.`modify_date` = #{modifyDate}</if>
+			<if test="gender != null">AND t.`gender` = #{gender}</if>
+			<if test="pass != null">AND t.`pass` = #{pass}</if>
+			<if test="loginRadio != null">AND t.`login_radio` = #{loginRadio}</if>
+			<if test="emailVerifi != null">AND t.`email_verifi` = #{emailVerifi}</if>
+			<if test="remark != null">AND t.`remark` = #{remark}</if>
+			<if test="sessionId != null">AND t.`session_id` = #{sessionId}</if>
+			<if test="portrait != null">AND t.`portrait` = #{portrait}</if>
+			<if test="userId != null">AND t.`user_id` = #{userId}</if>
+			<if test="sorted != null">AND t.`sorted` = #{sorted}</if>
+			<if test="site != null">AND t.`site` = #{site}</if>
+			<if test="personality != null">AND t.`personality` = #{personality}</if>
+			<if test="phone != null">AND t.`phone` = #{phone}</if>
+			<if test="replyRadio != null">AND t.`reply_radio` = #{replyRadio}</if>
+			<if test="name != null">AND t.`name` = #{name}</if>
+			<if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+			<if test="phoneVerifi != null">AND t.`phone_verifi` = #{phoneVerifi}</if>
+			<if test="email != null">AND t.`email` = #{email}</if>
+			<if test="age != null">AND t.`age` = #{age}</if>
+			<if test="status != null">AND t.`status` = #{status}</if>
+			<if test="createDate != null">AND t.`create_date` = #{createDate}</if>
+		</where>	
+	</sql>
+	
+	<select id="queryByPrimaryKey" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.UserEntity">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_user` AS `t`
+		WHERE
+			t.`user_id` = #{userId}
+	</select>
+	
+	<select id="queryByParamSelective" parameterType="io.javaweb.community.entity.UserEntity" resultType="io.javaweb.community.entity.UserEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<select id="queryByParamSelectiveSole" parameterType="io.javaweb.community.entity.UserEntity" resultType="io.javaweb.community.entity.UserEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<insert id="create" parameterType="io.javaweb.community.entity.UserEntity" >
+		INSERT INTO 
+			`jw_user`
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="browseRadio != null">`browse_radio`,</if>
+			<if test="github != null">`github`,</if>
+			<if test="role != null">`role`,</if>
+			<if test="modifyDate != null">`modify_date`,</if>
+			<if test="gender != null">`gender`,</if>
+			<if test="pass != null">`pass`,</if>
+			<if test="loginRadio != null">`login_radio`,</if>
+			<if test="emailVerifi != null">`email_verifi`,</if>
+			<if test="remark != null">`remark`,</if>
+			<if test="sessionId != null">`session_id`,</if>
+			<if test="portrait != null">`portrait`,</if>
+			<if test="userId != null">`user_id`,</if>
+			<if test="sorted != null">`sorted`,</if>
+			<if test="site != null">`site`,</if>
+			<if test="personality != null">`personality`,</if>
+			<if test="phone != null">`phone`,</if>
+			<if test="replyRadio != null">`reply_radio`,</if>
+			<if test="name != null">`name`,</if>
+			<if test="createUser != null">`create_user`,</if>
+			<if test="phoneVerifi != null">`phone_verifi`,</if>
+			<if test="email != null">`email`,</if>
+			<if test="age != null">`age`,</if>
+			<if test="status != null">`status`,</if>
+			<if test="createDate != null">`create_date`,</if>
+		</trim>
+		<trim prefix=" VALUES(" suffix=")" suffixOverrides=",">
+			<if test="browseRadio != null">#{browseRadio},</if>
+			<if test="github != null">#{github},</if>
+			<if test="role != null">#{role},</if>
+			<if test="modifyDate != null">#{modifyDate},</if>
+			<if test="gender != null">#{gender},</if>
+			<if test="pass != null">#{pass},</if>
+			<if test="loginRadio != null">#{loginRadio},</if>
+			<if test="emailVerifi != null">#{emailVerifi},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="sessionId != null">#{sessionId},</if>
+			<if test="portrait != null">#{portrait},</if>
+			<if test="userId != null">#{userId},</if>
+			<if test="sorted != null">#{sorted},</if>
+			<if test="site != null">#{site},</if>
+			<if test="personality != null">#{personality},</if>
+			<if test="phone != null">#{phone},</if>
+			<if test="replyRadio != null">#{replyRadio},</if>
+			<if test="name != null">#{name},</if>
+			<if test="createUser != null">#{createUser},</if>
+			<if test="phoneVerifi != null">#{phoneVerifi},</if>
+			<if test="email != null">#{email},</if>
+			<if test="age != null">#{age},</if>
+			<if test="status != null">#{status},</if>
+			<if test="createDate != null">#{createDate},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="io.javaweb.community.entity.UserEntity">
+		UPDATE `jw_user`
+		<set>
+			<if test="browseRadio != null">`browse_radio` = #{browseRadio},</if>
+			<if test="github != null">`github` = #{github},</if>
+			<if test="role != null">`role` = #{role},</if>
+			<if test="modifyDate != null">`modify_date` = #{modifyDate},</if>
+			<if test="gender != null">`gender` = #{gender},</if>
+			<if test="pass != null">`pass` = #{pass},</if>
+			<if test="loginRadio != null">`login_radio` = #{loginRadio},</if>
+			<if test="emailVerifi != null">`email_verifi` = #{emailVerifi},</if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="sessionId != null">`session_id` = #{sessionId},</if>
+			<if test="portrait != null">`portrait` = #{portrait},</if>
+			<if test="sorted != null">`sorted` = #{sorted},</if>
+			<if test="site != null">`site` = #{site},</if>
+			<if test="personality != null">`personality` = #{personality},</if>
+			<if test="phone != null">`phone` = #{phone},</if>
+			<if test="replyRadio != null">`reply_radio` = #{replyRadio},</if>
+			<if test="name != null">`name` = #{name},</if>
+			<if test="createUser != null">`create_user` = #{createUser},</if>
+			<if test="phoneVerifi != null">`phone_verifi` = #{phoneVerifi},</if>
+			<if test="email != null">`email` = #{email},</if>
+			<if test="age != null">`age` = #{age},</if>
+			<if test="status != null">`status` = #{status},</if>
+			<if test="createDate != null">`create_date` = #{createDate},</if>
+		</set>
+		WHERE
+			`user_id` = #{userId}
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="io.javaweb.community.entity.UserEntity">
+		UPDATE 
+			`jw_user`
+		SET
+			`browse_radio` = #{browseRadio},
+			`github` = #{github},
+			`role` = #{role},
+			`modify_date` = #{modifyDate},
+			`gender` = #{gender},
+			`pass` = #{pass},
+			`login_radio` = #{loginRadio},
+			`email_verifi` = #{emailVerifi},
+			`remark` = #{remark},
+			`session_id` = #{sessionId},
+			`portrait` = #{portrait},
+			`sorted` = #{sorted},
+			`site` = #{site},
+			`personality` = #{personality},
+			`phone` = #{phone},
+			`reply_radio` = #{replyRadio},
+			`name` = #{name},
+			`create_user` = #{createUser},
+			`phone_verifi` = #{phoneVerifi},
+			`email` = #{email},
+			`age` = #{age},
+			`status` = #{status},
+			`create_date` = #{createDate}
+		WHERE
+			`user_id` = #{userId}
+	</update>
+	
+	<delete id="deleteByPrimaryKey"  parameterType="java.io.Serializable">
+		DELETE FROM `jw_user` WHERE `user_id` = #{userId}
+	</delete>
+	
+	<delete id="deleteByParamSelective" parameterType="io.javaweb.community.entity.UserEntity">
+		DELETE FROM `jw_user`
+		<where>
+			<if test="browseRadio != null">AND `browse_radio` = #{browseRadio}</if>
+			<if test="github != null">AND `github` = #{github}</if>
+			<if test="role != null">AND `role` = #{role}</if>
+			<if test="modifyDate != null">AND `modify_date` = #{modifyDate}</if>
+			<if test="gender != null">AND `gender` = #{gender}</if>
+			<if test="pass != null">AND `pass` = #{pass}</if>
+			<if test="loginRadio != null">AND `login_radio` = #{loginRadio}</if>
+			<if test="emailVerifi != null">AND `email_verifi` = #{emailVerifi}</if>
+			<if test="remark != null">AND `remark` = #{remark}</if>
+			<if test="sessionId != null">AND `session_id` = #{sessionId}</if>
+			<if test="portrait != null">AND `portrait` = #{portrait}</if>
+			<if test="userId != null">AND `user_id` = #{userId}</if>
+			<if test="sorted != null">AND `sorted` = #{sorted}</if>
+			<if test="site != null">AND `site` = #{site}</if>
+			<if test="personality != null">AND `personality` = #{personality}</if>
+			<if test="phone != null">AND `phone` = #{phone}</if>
+			<if test="replyRadio != null">AND `reply_radio` = #{replyRadio}</if>
+			<if test="name != null">AND `name` = #{name}</if>
+			<if test="createUser != null">AND `create_user` = #{createUser}</if>
+			<if test="phoneVerifi != null">AND `phone_verifi` = #{phoneVerifi}</if>
+			<if test="email != null">AND `email` = #{email}</if>
+			<if test="age != null">AND `age` = #{age}</if>
+			<if test="status != null">AND `status` = #{status}</if>
+			<if test="createDate != null">AND `create_date` = #{createDate}</if>
+		</where>
+	</delete>
+</mapper>

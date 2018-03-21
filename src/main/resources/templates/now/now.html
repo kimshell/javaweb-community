@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include('/common/common_header.html'){}  %>
+        <title>此时此刻</title>
+    </head>
+    <body>
+
+		<% include('/common/common_body_header.html',{active:'now'}){} %>
+		
+		<div class="container-fluid">
+			<div class="row">
+				
+				<% /*
+					<div class="alert alert-success">成功！很好地完成了提交。</div>
+					<div class="alert alert-info">信息！请注意这个信息。</div>
+					<div class="alert alert-warning">警告！请不要提交。</div>
+					<div class="alert alert-danger">错误！请进行一些更改。</div>
+					*/
+				%>
+				
+				<div class="col-md-7 col-md-offset-1" id="notify">
+				<%
+					for(var record in records){
+						/**
+							var color = '';
+							if(record.type == 'LOGIN'){
+								color = 'alert-success';				
+							}else if(record.type == 'REGISTER'){
+								color = 'alert-info';					
+							}else if(record.type == 'POST'){			
+								color = 'alert-warning';				
+							}else if(record.type == 'READING'){
+								color = 'alert-alert-danger';
+							}
+						**/
+				%>
+						<div class="alert ${color!}" style="display: none">
+							${record.content}
+						</div>
+				<%  } %>
+				
+				</div>
+				
+				<% include('/common/common_right_menu.html',{}){} %>
+			</div>
+		</div>
+		
+		<% include('/common/common_footer.html',{}){} %>
+    </body>
+	<% include('/common/common_script.html',{}){} %>
+    <script>
+    	var webSocket = null;
+    	$(function(){
+    	    var all_data = $(".alert");
+    	    if(all_data.length>0) {
+    	        $.each(all_data,function (i,v) {
+					$(v).show(2000);
+                });
+			}
+    		webSocket = new WebSocket("ws://www.javaweb.io/channel/now");
+
+			var dom_id = 0;
+    		webSocket.onmessage = function(e){
+
+    			var message = JSON.parse(e.data);
+
+    			var color = '';
+
+    			/**if(message.type == 'LOGIN'){
+    				color = 'alert-success';
+    			}else if(message.type == 'REGISTER'){
+    				color = 'alert-info';
+    			}**/
+    			$('#notify').prepend('<div class="alert '+color+'" style="display:none" id="custom'+dom_id+'">'+message.content+'</div>');
+    			$("#custom"+dom_id).show(500);
+    			dom_id++;
+
+				if($('#notify').children().length > 50){
+					$('.alert').last().remove();
+				}
+    		}
+    		webSocket.onclose = function(e){
+    			layer.alert('连接断开,请尝试刷新页面', {
+					skin: 'layui-layer-lan',
+					closeBtn: 0
+    			});
+    		}
+    	});
+    </script>
+</html>

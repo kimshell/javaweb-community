@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.PostReplyMapper">
+
+	<sql id="BASE_FIELD">
+		`${alias}`.`is_parent` AS `isParent`,
+		`${alias}`.`modify_date` AS `modifyDate`,
+		`${alias}`.`remark` AS `remark`,
+		`${alias}`.`post_id` AS `postId`,
+		`${alias}`.`content` AS `content`,
+		`${alias}`.`parent_id` AS `parentId`,
+		`${alias}`.`sorted` AS `sorted`,
+		`${alias}`.`reply_id` AS `replyId`,
+		`${alias}`.`anonymous` AS `anonymous`,
+		`${alias}`.`create_user` AS `createUser`,
+		`${alias}`.`page` AS `page`,
+		`${alias}`.`create_date` AS `createDate`,
+		`${alias}`.`status` AS `status`
+	</sql>
+	
+	<sql id="BASE_SELECT">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_post_reply` AS `t`
+		<where>
+			<if test="isParent != null">AND t.`is_parent` = #{isParent}</if>
+			<if test="modifyDate != null">AND t.`modify_date` = #{modifyDate}</if>
+			<if test="remark != null">AND t.`remark` = #{remark}</if>
+			<if test="postId != null">AND t.`post_id` = #{postId}</if>
+			<if test="content != null">AND t.`content` = #{content}</if>
+			<if test="parentId != null">AND t.`parent_id` = #{parentId}</if>
+			<if test="sorted != null">AND t.`sorted` = #{sorted}</if>
+			<if test="replyId != null">AND t.`reply_id` = #{replyId}</if>
+			<if test="anonymous != null">AND t.`anonymous` = #{anonymous}</if>
+			<if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+			<if test="page != null">AND t.`page` = #{page}</if>
+			<if test="createDate != null">AND t.`create_date` = #{createDate}</if>
+			<if test="status != null">AND t.`status` = #{status}</if>
+		</where>	
+	</sql>
+	
+	<select id="queryByPrimaryKey" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.PostReplyEntity">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_post_reply` AS `t`
+		WHERE
+			t.`reply_id` = #{replyId}
+	</select>
+	
+	<select id="queryByParamSelective" parameterType="io.javaweb.community.entity.PostReplyEntity" resultType="io.javaweb.community.entity.PostReplyEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<select id="queryByParamSelectiveSole" parameterType="io.javaweb.community.entity.PostReplyEntity" resultType="io.javaweb.community.entity.PostReplyEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<insert id="create" parameterType="io.javaweb.community.entity.PostReplyEntity" >
+		INSERT INTO 
+			`jw_post_reply`
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="isParent != null">`is_parent`,</if>
+			<if test="modifyDate != null">`modify_date`,</if>
+			<if test="remark != null">`remark`,</if>
+			<if test="postId != null">`post_id`,</if>
+			<if test="content != null">`content`,</if>
+			<if test="parentId != null">`parent_id`,</if>
+			<if test="sorted != null">`sorted`,</if>
+			<if test="replyId != null">`reply_id`,</if>
+			<if test="anonymous != null">`anonymous`,</if>
+			<if test="createUser != null">`create_user`,</if>
+			<if test="page != null">`page`,</if>
+			<if test="createDate != null">`create_date`,</if>
+			<if test="status != null">`status`,</if>
+		</trim>
+		<trim prefix=" VALUES(" suffix=")" suffixOverrides=",">
+			<if test="isParent != null">#{isParent},</if>
+			<if test="modifyDate != null">#{modifyDate},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="postId != null">#{postId},</if>
+			<if test="content != null">#{content},</if>
+			<if test="parentId != null">#{parentId},</if>
+			<if test="sorted != null">#{sorted},</if>
+			<if test="replyId != null">#{replyId},</if>
+			<if test="anonymous != null">#{anonymous},</if>
+			<if test="createUser != null">#{createUser},</if>
+			<if test="page != null">#{page},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="status != null">#{status},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="io.javaweb.community.entity.PostReplyEntity">
+		UPDATE `jw_post_reply`
+		<set>
+			<if test="sorted != null">`sorted` = #{sorted},</if>
+			<if test="isParent != null">`is_parent` = #{isParent},</if>
+			<if test="modifyDate != null">`modify_date` = #{modifyDate},</if>
+			<if test="anonymous != null">`anonymous` = #{anonymous},</if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="createUser != null">`create_user` = #{createUser},</if>
+			<if test="page != null">`page` = #{page},</if>
+			<if test="postId != null">`post_id` = #{postId},</if>
+			<if test="content != null">`content` = #{content},</if>
+			<if test="parentId != null">`parent_id` = #{parentId},</if>
+			<if test="createDate != null">`create_date` = #{createDate},</if>
+			<if test="status != null">`status` = #{status},</if>
+		</set>
+		WHERE
+			`reply_id` = #{replyId}
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="io.javaweb.community.entity.PostReplyEntity">
+		UPDATE 
+			`jw_post_reply`
+		SET
+			`sorted` = #{sorted},
+			`is_parent` = #{isParent},
+			`modify_date` = #{modifyDate},
+			`anonymous` = #{anonymous},
+			`remark` = #{remark},
+			`create_user` = #{createUser},
+			`page` = #{page},
+			`post_id` = #{postId},
+			`content` = #{content},
+			`parent_id` = #{parentId},
+			`create_date` = #{createDate},
+			`status` = #{status}
+		WHERE
+			`reply_id` = #{replyId}
+	</update>
+	
+	<delete id="deleteByPrimaryKey"  parameterType="java.io.Serializable">
+		DELETE FROM `jw_post_reply` WHERE `reply_id` = #{replyId}
+	</delete>
+	
+	<delete id="deleteByParamSelective" parameterType="io.javaweb.community.entity.PostReplyEntity">
+		DELETE FROM `jw_post_reply`
+		<where>
+			<if test="isParent != null">AND `is_parent` = #{isParent}</if>
+			<if test="modifyDate != null">AND `modify_date` = #{modifyDate}</if>
+			<if test="remark != null">AND `remark` = #{remark}</if>
+			<if test="postId != null">AND `post_id` = #{postId}</if>
+			<if test="content != null">AND `content` = #{content}</if>
+			<if test="parentId != null">AND `parent_id` = #{parentId}</if>
+			<if test="sorted != null">AND `sorted` = #{sorted}</if>
+			<if test="replyId != null">AND `reply_id` = #{replyId}</if>
+			<if test="anonymous != null">AND `anonymous` = #{anonymous}</if>
+			<if test="createUser != null">AND `create_user` = #{createUser}</if>
+			<if test="page != null">AND `page` = #{page}</if>
+			<if test="createDate != null">AND `create_date` = #{createDate}</if>
+			<if test="status != null">AND `status` = #{status}</if>
+		</where>
+	</delete>
+</mapper>

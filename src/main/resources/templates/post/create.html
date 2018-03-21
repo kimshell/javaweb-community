@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<% include('/common/common_header.html'){} %>
+        	<!--  <link href="${ctxPath}/static/summernote/summernote.css" rel="stylesheet">-->
+        	<link href="https://cdn.bootcss.com/summernote/0.8.8/summernote.css" rel="stylesheet">
+		<title>帖子发布</title>
+
+	</head>
+	<body>
+		<% include('/common/common_body_header.html',{active:'null'}){} %>
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-7 col-md-offset-1">
+					
+					
+					
+					<div class="panel panel-default">
+					    <div class="panel-heading">
+					       	<span class="glyphicon glyphicon-pencil"></span> 发表新的帖子
+					    </div>
+					    <div class="panel-body">
+					    	
+					    	
+							<form class="form-horizontal" role="form" id="post-form">
+								<input type="hidden" name="codeKey" id="codeKey"/>
+								<div class="form-group">
+									<label for="title" class="col-sm-2 control-label" style="text-align: left;">标　　题</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" id="title" name="title" placeholder="请输入标题">
+									</div>
+								</div>
+							
+								<div class="form-group">
+									<label for="postType" class="col-sm-2 control-label" style="text-align: left;">类　　型</label>
+									<div class="col-sm-10">
+										<select name="postType" id="postType" class="form-control">
+											<option value="DISCUSS">技术交流</option>
+											<option value="HELP">求助问答</option>
+											<option value="NOTICE" ${isRole('USER') ? 'disabled="disabled"'}>系统公告</option>
+											<option value="LEISURE">闲聊灌水</option>
+											<option value="SUGGEST">建议/bug提交</option>
+										</select>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="replyControl" class="col-sm-2 control-label" style="text-align: left;">回复控制</label>
+									<div class="col-sm-10">
+										<select name="replyControl" id="replyControl" class="form-control">
+											<option value="ALLOW">允许回复</option>
+											<option value="DISALLOW_ANONYMOUS">不允许匿名回复</option>
+											<option value="DISALLOW_OTHER">不允许任何回复</option>
+										</select>
+									</div>
+								</div>
+								
+								<div>
+									<div id="summernote"></div>  
+								</div>
+								
+								<div class="form-group">
+									<div class="col-sm-2">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name=anonymous value="true">匿名发布
+											</label>
+										</div>
+									</div>
+								</div>
+								
+								<div id="code-input" class="form-group hide">
+									<div class="col-sm-2">
+										<input type="text" class="form-control" id="code" name="verifyCode" placeholder="人类验证">
+									</div>
+									<img id="verifyCode" alt="" width="70px;" height="35px;" style="cursor: pointer;">
+								</div>
+							</form>
+							
+							<div>
+								<button class="btn btn-block btn-success" id="post-create">
+									<span class="glyphicon glyphicon-ok-sign"></span> 提交
+								</button>
+							</div>
+					    </div>
+					</div>
+				</div>
+				<% include('/common/common_right_menu.html',{}){} %>
+			</div>
+		</div>
+		
+		
+		<% include('/common/common_footer.html',{}){} %>
+	</body>
+	<% include('/common/common_script.html',{}){} %>
+	<script src="https://cdn.bootcss.com/summernote/0.8.8/summernote.js"></script>
+	<script src="https://cdn.bootcss.com/summernote/0.8.8/lang/summernote-zh-CN.js"></script>
+	<script type="text/javascript">
+	
+		$(function(){
+			
+			$('#verifyCode').click(function(){
+				$('#codeKey').val('');
+				$.ajax({
+					url:'${ctxPath}/verifyCode',
+					success:function(response){
+						if(response.success){
+							$('#verifyCode').attr({'src':response.data.code})
+							$('#codeKey').val(response.data.cokeKey);
+							$("input[name='verifyCode']").val('');
+						}
+					}
+				});
+			});
+			
+			$('#summernote').summernote({
+				toolbar:[
+					['Paragraph',['style','ol','ul','paragraph','height']],
+					['Font',['fontname','fontsize','color','bold','italic','underline','strikethrough','superscript','subscript','clear']],
+					['Insert',['picture','link','video','table','hr']],
+					['Misc',['fullscreen','codeview','undo','redo','help']],
+				],
+				placeholder:'请输入文章内容 ',
+				height: 288,                 
+				focus: true,   
+				lang:'zh-CN',
+				focus:false,
+				callbacks:{
+					onChange: function(contents, $editable) {
+						sessionStorage.setItem("temp_post_content", contents); 
+				    },
+					onImageUpload: function(files, editor, $editable) {
+						if(files.length > 10){
+							layer.alert('一次最多只能上传10张图片', {
+								skin: 'layui-layer-lan', //样式类名
+								closeBtn: 0
+	            			});
+							return;
+						}
+						var formData = new FormData();  
+						for(var i = 0 ; i < files.length; i++){
+							formData.append("files", $('.note-image-input')[0].files[i]);  
+						}
+						layer.load(2);
+				        $.ajax({  
+				            data : formData,  
+				            type : "POST",  
+				            url : "${ctxPath}/upload",
+				            cache : false,  
+				            contentType : false,  
+				            processData : false,  
+				            dataType : "JSON",  
+				            success: function(response) {
+				            	layer.closeAll();
+				            	if(response.success){
+				            		layer.msg('上传成功');
+				            		for(var i = 0 ; i < response.data.length; i++){
+				            			$('#summernote').summernote('insertImage', response.data[i]);
+				            		}
+				            	}else{
+				            		if(response.status == 'MISSING_VERIFY_CODE' || response.status == 'VERIFY_CODE_FAIL'){
+				            			response.message = '行为异常,限定时间内图片上传数量超过限制,请联系管理员';
+				            		}
+				            		layer.alert(response.message, {
+										skin: 'layui-layer-lan',
+										closeBtn: 0
+			            			});
+				            	}
+				            },
+				        });  
+					}  
+				},
+			});  
+			
+			var postContent = sessionStorage.getItem('temp_post_content');
+			if(postContent){
+				$('#summernote').summernote('code',postContent);
+			}
+			
+			$('#post-create').click(function(){
+				if($(this).hasClass('disabled')){
+					return;
+				}
+				var formArray = $('#post-form').serializeArray();
+				for(var x = 0 ;x < formArray.length ; x++){
+					var item = formArray[x];
+					if(item['name'] == 'title'){
+						if(!item['value'].trim()){
+							layer.msg('标题不能为空');
+							return;
+						}else if(!new RegExp('.{1,50}').test(item['value'])){
+							layer.msg('最多50个字符');
+							return;
+						}
+					}
+				}
+				var content = $('#summernote').summernote('code');
+				if(content == '' || content == '<p><br></p>'){
+					layer.msg('请输入内容');
+					return;
+				}
+				formArray.push({name:'content',value:content})
+				
+				layer.load(2);
+				
+				$(this).addClass('disabled');
+    			$(this).text('提交中... ...')
+				
+				$.ajax({
+					url:'${ctxPath}/post/create',
+					method:'POST',
+					data:formArray,
+					success:function(response){
+						if(response.success){
+							sessionStorage.removeItem('temp_post_content');
+							window.location.href = '${ctxPath}/post/' + response.data + '?broadCast=false';
+						}else{
+							layer.closeAll();
+							layer.msg(response.status == 'MISSING_VERIFY_CODE' ? '请输入验证码' : response.message);
+    						if(response.status == 'MISSING_VERIFY_CODE'){
+    							$('#code-input').removeClass('hide');
+    							$('#verifyCode').click();
+    						}else{
+    							if(!$('#code-input').hasClass('hide')){
+    								$('#verifyCode').click();
+    							}
+    						}
+    						$('#post-create').removeClass('disabled');
+        	    			$('#post-create').text('提交');
+						}
+					},
+					complete:function(){
+						$('#codeKey').val('');
+						$("input[name='verifyCode']").val('');
+	    			}
+				});
+			});
+			
+			
+			//$('#summernote').summernote('disable');
+		});  
+		
+		
+		
+		
+	</script>
+</html>

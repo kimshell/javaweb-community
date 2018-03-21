@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include('/common/common_header.html'){}  %>
+        <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+        <title>${user.name}</title>
+		<style>
+			table tr,table td{border:0!important;}
+		</style>
+    </head>
+    <body>
+		<% include('/common/common_body_header.html',{active:'login'}){} %>
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<div style="text-align: center;">
+						<img src="${user.portrait}" width="200px;" height="200px;"/>
+						<h3>${user.name}</h3>
+					</div>
+					<!--<ul class="list-group" style="text-align: center;">
+						&lt;!&ndash; 个性签名 &ndash;&gt;
+						<li class="list-group-item">
+							<i class="fa fa-map-signs"></i>
+							<span>${user.personality!}</span>
+						</li>
+
+						&lt;!&ndash; 个人站点 &ndash;&gt;
+						<li class="list-group-item">
+							<i class="fa fa-link"></i>
+							<a target="_blank" href="${user.site}">${user.site!}</a>
+						</li>
+
+				    	&lt;!&ndash; github &ndash;&gt;
+						<li class="list-group-item">
+							<i class="fa fa-github"></i>
+				    		<a target="_blank" href="${user.github}">${user.github!}</a>
+				    	</li>
+
+					    <%if(user.status != 'NORMAL'){%>
+					    	&lt;!&ndash; 账户状态&ndash;&gt;
+					    	 <li class="list-group-item" style="text-align: center;color: red;">该账户已经被停封</li>
+						<%}%>
+					</ul>-->
+					<table class="table table-bordered" style="border:0;">
+						<tr>
+							<td class="col-md-5" style="text-align: right">个性签名</td>
+							<td class="col-md-5">
+								<i class="fa fa-map-signs"></i>
+								<span>${user.personality!}</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="col-md-5" style="text-align: right">个人站点</td>
+							<td class="col-md-5">
+								<i class="fa fa-link"></i>
+								<a target="_blank" href="${user.site}">${user.site!}</a>
+							</td>
+						</tr>
+						<tr>
+							<td class="col-md-5" style="text-align: right">Github主页</td>
+							<td class="col-md-5">
+								<i class="fa fa-github"></i>
+								<a target="_blank" href="${user.github}">${user.github!}</a>
+							</td>
+						</tr>
+						<%if(user.status != 'NORMAL'){%>
+						<tr>
+							<td colspan="2" style="text-align: center;color: red;">该账户已经被停封</td>
+						</tr>
+						<%}%>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container-fluid" style="margin-top: 10px;">
+			<div class="row">
+				<div class="col-md-5 col-md-offset-1" >
+				
+				
+				<div class="panel panel-default">
+				    <div class="panel-heading" style="text-align: center;">
+				        <h3 class="panel-title"><span class="glyphicon glyphicon-list-alt"></span> 最近发表</h3>
+				    </div>
+				    <div class="panel-body">
+				    
+				    	<%if(!isEmpty(user.posts)){%>
+					    	<%for(var post in user.posts){%>
+					    		<a target="_blank" href="${ctxPath}/post/${post.postId}" class="list-group-item">
+					    			<span style="width: 80px;display: inline-block;">${postDate(post.createDate)}</span> 
+					    			${post.title}
+					    			<span style="display: inline-block;float: right;">${post.browse}阅读/${post.replyCount}回复</span>
+					    		</a>
+					    	<%}%>
+					    	<div class="list-group-item" style="text-align: right;">
+				    			<a class="btn btn-primary" target="_blank" href="${ctxPath}/index?createUser=${user.userId}">查看所有</a>
+			    			</div>
+				    	<%}else{%>
+				    		<div class="list-group-item" style="text-align: center;">
+					    		<a >
+					    			没有记录
+					    		</a>
+				    		</div>
+				    	<%}%>
+				    	
+						
+				    </div>
+				</div>
+
+				</div>
+				<div class="col-md-5">
+					
+					
+					<div class="panel panel-default">
+				    <div class="panel-heading" style="text-align: center;">
+				        <h3 class="panel-title"><span class="glyphicon glyphicon-list-alt"></span> 最近回复</h3>
+				    </div>
+				    <div class="panel-body">
+				    	
+				    	<%if(!isEmpty(user.replys)){%>
+					    	<%for(var reply in user.replys){%>
+								<div class="list-group-item">
+									<span style="width: 80px;display: inline-block;">${postDate(reply.createDate)}</span> 在帖子 <a target="_blank" href="${ctxPath}/post/${reply.postId}?page=${reply.page}#reply-${reply.replyId}">${reply.post.title}</a> 中回复了:
+									<div style="margin-top: 5px;border:1px solid green;border-radius:5px;overflow: auto;">
+										${reply.content}
+									</div>
+					    		</div>
+				    		<%}%>	
+				    		<!--  
+					    	<div class="list-group-item" style="text-align: right;">
+				    			<a class="btn btn-primary" target="_blank" href="${ctxPath}/index?createUser=${user.userId}">查看所有</a>
+			    			</div>-->
+				    	<%}else{%>
+				    		<div class="list-group-item" style="text-align: center;">
+					    		<a >
+					    			没有记录
+					    		</a>
+				    		</div>
+				    	<%}%>
+				    	
+				    </div>
+				</div>
+					
+				</div>
+			</div>
+		</div>
+
+		<% include('/common/common_footer.html',{}){} %>
+    </body>
+	<% include('/common/common_script.html',{}){} %>
+    <script>
+    </script>
+</html>

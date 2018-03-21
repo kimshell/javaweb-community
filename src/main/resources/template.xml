@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="AUTO_CREATE_MAPPER">
+
+	<sql id="BASE_FIELD">
+		AUTO_CREATE_BASE_FIELD
+	</sql>
+	
+	<sql id="BASE_SELECT">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`AUTO_CREATE_TB_NAME` AS `t`
+		<where>
+			AUTO_CREATE_BASE_SELECT
+		</where>	
+	</sql>
+	
+	<select id="queryByPrimaryKey" parameterType="java.io.Serializable" resultType="AUTO_CREATE_ENTITY">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`AUTO_CREATE_TB_NAME` AS `t`
+		WHERE
+		AUTO_CREATE_QUERYBYPRIMARYKEY
+	</select>
+	
+	<select id="queryByParamSelective" parameterType="AUTO_CREATE_ENTITY" resultType="AUTO_CREATE_ENTITY">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<select id="queryByParamSelectiveSole" parameterType="AUTO_CREATE_ENTITY" resultType="AUTO_CREATE_ENTITY">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<insert id="create" parameterType="AUTO_CREATE_ENTITY" >
+		INSERT INTO 
+			`AUTO_CREATE_TB_NAME`
+		AUTO_CREATE_CREATE
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="AUTO_CREATE_ENTITY">
+		UPDATE `AUTO_CREATE_TB_NAME`
+		AUTO_CREATE_UPDATEBYPRIMARYKEYSELECTIVE
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="AUTO_CREATE_ENTITY">
+		UPDATE 
+			`AUTO_CREATE_TB_NAME`
+		SET
+			AUTO_CREATE_UPDATEBYPRIMARYKEY
+	</update>
+	
+	<delete id="deleteByPrimaryKey"  parameterType="java.io.Serializable">
+		AUTO_CREATE_DELETEBYPRIMARYKEY
+	</delete>
+	
+	<delete id="deleteByParamSelective" parameterType="AUTO_CREATE_ENTITY">
+		DELETE FROM `AUTO_CREATE_TB_NAME`
+		<where>
+			AUTO_CREATE_DELETEBYPARAMSELECTIVE
+		</where>
+	</delete>
+</mapper>

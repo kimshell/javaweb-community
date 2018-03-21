@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.PostMapper">
+
+    <resultMap id="BASE_RESULT_MAP" type="io.javaweb.community.entity.PostEntity">
+        <id column="postId" property="postId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="anonymous" property="anonymous"/>
+        <result column="type" property="type"/>
+        <result column="browse" property="browse"/>
+        <result column="essence" property="essence"/>
+        <result column="top" property="top"/>
+        <result column="replyControl" property="replyControl"/>
+        <result column="createUser" property="createUser"/>
+        <result column="createDate" property="createDate"/>
+        <result column="modifyDate" property="modifyDate"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sorted" property="sorted"/>
+    </resultMap>
+
+	<resultMap id="POST_RESULT_MAP_01" type="io.javaweb.community.entity.dto.PostDTO" extends="BASE_RESULT_MAP">
+        <result column="agreeCount" property="agreeCount"/>
+        <result column="disAgreeCount" property="disAgreeCount"/>
+        <result column="replyCount" property="replyCount"/>
+        <result column="isAgree" property="isAgree"/>
+		<result column="isDisAgree" property="isDisAgree"/>
+		<result column="isAuthor" property="isAuthor"/>
+		<result column="isCollection" property="isCollection"/>
+        <association property="author" columnPrefix="user_" resultMap="io.javaweb.community.mapper.UserMapper.BASE_RESULT_MAP"/>
+	</resultMap>
+
+    <!-- 详情 -->
+	<select id="queryPostDetailByPostId" parameterType="io.javaweb.community.entity.dto.PostDTO" resultMap="POST_RESULT_MAP_01">
+        SELECT
+            <include refid="io.javaweb.community.mapper.PostMapper.BASE_FIELD">
+                <property name="alias" value="t"/>
+            </include>,
+            (SELECT COUNT(*) FROM `jw_attitude` t2  WHERE t2.`target` = 'POST' AND t2.`type` = 'AGREE' AND t2.`target_id` = t.`post_id`) AS `agreeCount`,
+            (SELECT COUNT(*) FROM `jw_attitude` t3  WHERE t3.`target` = 'POST' AND t3.`type` = 'DIS_AGREE' AND t3.`target_id` = t.`post_id`) AS `disAgreeCount`,
+           	(SELECT COUNT(*) FROM `jw_post_reply` t4 WHERE t4.`post_id` = t.`post_id`) AS `replyCount`,
+            <if test="sessionUser != null">
+                (SELECT 1 FROM `jw_attitude` t6 WHERE t6.`target_id` = t.`post_id` AND t6.`target` = 'POST' AND t6.`type` = 'AGREE' AND t6.`create_user` = #{sessionUser.userId}) AS `isAgree`,
+                (SELECT 1 FROM `jw_attitude` t5 WHERE t5.`target_id` = t.`post_id` AND t5.`target` = 'POST' AND t5.`type` = 'DIS_AGREE' AND t5.`create_user` = #{sessionUser.userId}) AS `isDisAgree`,
+                (SELECT 1 FROM `jw_collection` t7 WHERE t7.`post_id` = t.`post_id` AND t7.`create_user` = #{sessionUser.userId}) AS `isCollection`,
+                IF(t.`create_user` = #{sessionUser.userId},1,0) AS `isAuthor`,
+            </if>
+            t1.`user_id` AS `user_userId`,
+            t1.`name` AS `user_name`,
+            t1.`portrait` AS `user_portrait`,
+            t1.`gender` AS `user_gender`,
+            t1.`role` AS `user_role`,
+            t1.`status` AS `user_status`
+        FROM
+            `jw_post` t
+            INNER JOIN `jw_user` t1 ON t1.`user_id` = t.`create_user`
+        WHERE
+            t.`post_id` = #{postId}
+	</select>
+	
+	<!-- 主页帖子记录 -->
+	<select id="queryIndexPosts" parameterType="io.javaweb.community.entity.dto.PostDTO" resultMap="POST_RESULT_MAP_01">
+		SELECT
+			t.`post_id` AS `postId`,
+			t.`title`,
+			t.`type`,
+			t.`anonymous`,
+			t.`essence`,
+			t.`top`,
+			t.`browse`,
+			t.`create_date` AS `createDate`,
+            (SELECT COUNT(*) FROM `jw_post_reply` t2 WHERE t2.`post_id` = t.`post_id`) AS `replyCount`,
+            t1.`user_id` AS `user_userId`,
+            t1.`name` AS `user_name`,
+            t1.`portrait` AS `user_portrait`,
+            t1.`gender` AS `user_gender`,
+            t1.`role` AS `user_role`,
+            t1.`status` AS `user_status`
+		FROM
+			`jw_post` t
+			INNER JOIN `jw_user` t1 ON t1.`user_id` = t.`create_user`
+		<where>
+			<if test="status != null">AND t.`status` = #{status}</if>
+			<if test="type != null">AND t.`type` = #{type}</if>
+			<if test="top != null">AND t.`top` = #{top}</if>
+			<if test="essence != null">AND t.`essence` = #{essence}</if>
+			<if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+			<if test="anonymous != null">AND t.`anonymous` = #{anonymous}</if>
+		</where>
+	</select>
+	
+	<!-- 帖子阅读量自增1 -->
+	<update id="incrementPostBrowse" parameterType="java.io.Serializable">
+		UPDATE `jw_post` t SET t.`browse` = t.`browse` + 1 WHERE `post_id` = #{postId}
+	</update>
+	
+	<!-- 根据参数修改status -->
+	<update id="updateStatusByParamSelective" parameterType="io.javaweb.community.entity.PostEntity">
+		UPDATE
+			`jw_post`
+		SET
+			`status` = #{status}
+		<where>
+			<if test="modifyDate != null">AND `modify_date` = #{modifyDate}</if>
+			<if test="essence != null">AND `essence` = #{essence}</if>
+			<if test="replyControl != null">AND `reply_control` = #{replyControl}</if>
+			<if test="remark != null">AND `remark` = #{remark}</if>
+			<if test="postId != null">AND `post_id` = #{postId}</if>
+			<if test="title != null">AND `title` = #{title}</if>
+			<if test="type != null">AND `type` = #{type}</if>
+			<if test="content != null">AND `content` = #{content}</if>
+			<if test="sorted != null">AND `sorted` = #{sorted}</if>
+			<if test="top != null">AND `top` = #{top}</if>
+			<if test="anonymous != null">AND `anonymous` = #{anonymous}</if>
+			<if test="createUser != null">AND `create_user` = #{createUser}</if>
+			<if test="browse != null">AND `browse` = #{browse}</if>
+			<if test="createDate != null">AND `create_date` = #{createDate}</if>
+		</where>
+	</update>
+</mapper>
+
+
+
+
+
+
+
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <% include('/common/common_header.html'){}  %>
+	    <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+	    <title>发送激活邮件</title>
+	</head>
+	<body>
+		<% include('/common/common_body_header.html',{active:'index'}){} %>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<h2>${message}</h2>
+					<div style="text-align: center;">
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+		
+		<% include('/common/common_footer.html',{}){} %>
+	</body>
+	<% include('/common/common_script.html',{}){} %>
+	<script type="text/javascript">
+		$(function(){
+			
+		});
+	</script>
+</html>

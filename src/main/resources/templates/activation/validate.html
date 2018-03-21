@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <% include('/common/common_header.html'){}  %>
+	    <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+	    <title>邮箱验证</title>
+	</head>
+	<body>
+		<% include('/common/common_body_header.html',{active:'index'}){} %>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<%if(success){%>
+						<h2>验证成功,3s后跳转主页</h2>
+					<%}else{%>
+						<h2>验证失败,可能是激活邮件超时,请尝试<a href="${ctxPath}/activation/send">重新发送</a></h2>
+					<%}%>
+					<div style="text-align: center;">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		<% include('/common/common_footer.html',{}){} %>
+	</body>
+	<% include('/common/common_script.html',{}){} %>
+	<script type="text/javascript">
+		<%if(success){%>
+			window.setTimeout(function(){
+				window.location.href = "${ctxPath}/index";
+			},3000);
+		<%}%>
+	</script>
+</html>

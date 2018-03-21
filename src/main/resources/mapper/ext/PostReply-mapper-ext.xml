@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.PostReplyMapper">
+
+    <resultMap id="BASE_RESULT_MAP" type="io.javaweb.community.entity.PostReplyEntity">
+        <id column="replyId" property="replyId"/>
+        <result column="postId" property="postId"/>
+        <result column="content" property="content"/>
+        <result column="anonymous" property="anonymous"/>
+        <result column="parentId" property="parentId"/>
+        <result column="isParent" property="isParent"/>
+	    <result column="page" property="page"/>
+        <result column="createUser" property="createUser"/>
+        <result column="createDate" property="createDate"/>
+        <result column="modifyDate" property="modifyDate"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="sorted" property="sorted"/>
+    </resultMap>
+    
+    <resultMap id="POST_REPLY_RESULT_MAP_01" type="io.javaweb.community.entity.dto.PostReplyDTO" extends="BASE_RESULT_MAP">
+   		<result column="agreeCount" property="agreeCount"/>
+        <result column="disAgreeCount" property="disAgreeCount"/>
+		<result column="isAgree" property="isAgree"/>
+		<result column="isDisAgree" property="isDisAgree"/>
+		<result column="isAuthor" property="isAuthor"/>
+        <association property="author" columnPrefix="user_" resultMap="io.javaweb.community.mapper.UserMapper.BASE_RESULT_MAP"/>
+    </resultMap>
+    
+	<!-- 根据帖子id检索回复数据 -->
+	<select id="queryReplysByPostId" parameterType="io.javaweb.community.entity.PostReplyEntity" resultMap="POST_REPLY_RESULT_MAP_01">
+		SELECT
+    		<include refid="io.javaweb.community.mapper.PostReplyMapper.BASE_FIELD">
+    			<property name="alias" value="t"/>
+    		</include>,
+    		(SELECT COUNT(*) FROM `jw_attitude` t2  WHERE t2.`target` = 'POST_REPLY' AND t2.`type` = 'AGREE' AND t2.`target_id` = t.`reply_id`) AS `agreeCount`,
+            (SELECT COUNT(*) FROM `jw_attitude` t3  WHERE t3.`target` = 'POST_REPLY' AND t3.`type` = 'DIS_AGREE' AND t3.`target_id` = t.`reply_id`) AS `disAgreeCount`,
+            <if test="sessionUser != null">
+                (SELECT 1 FROM `jw_attitude` t4 WHERE t4.`target_id` = t.`reply_id` AND t4.`target` = 'POST_REPLY' AND t4.`type` = 'AGREE' AND t4.`create_user` = #{sessionUser.userId}) AS `isAgree`,
+                (SELECT 1 FROM `jw_attitude` t5 WHERE t5.`target_id` = t.`reply_id` AND t5.`target` = 'POST_REPLY' AND t5.`type` = 'DIS_AGREE' AND t5.`create_user` = #{sessionUser.userId}) AS `isDisAgree`,
+                IF(t.`create_user` = #{sessionUser.userId},1,0) AS `isAuthor`,
+            </if>
+            t1.`user_id` AS `user_userId`,
+            t1.`name` AS `user_name`,
+            t1.`portrait` AS `user_portrait`,
+            t1.`gender` AS `user_gender`,
+            t1.`role` AS `user_role`,
+            t1.`status` AS `user_status`
+    	FROM
+    		`jw_post_reply` t
+    		INNER JOIN `jw_user` t1 ON t1.`user_id` = t.`create_user`
+    	WHERE
+    		t.`post_id` = #{postId}
+	</select>
+	
+	<!-- 根据帖子id检索其回复数量 -->
+	<select id="queryReplyCountByPostId" parameterType="java.io.Serializable" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM `jw_post_reply` t WHERE t.`post_id` = #{postId}
+	</select>
+</mapper>

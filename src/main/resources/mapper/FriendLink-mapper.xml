@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.FriendLinkMapper">
+
+	<sql id="BASE_FIELD">
+		`${alias}`.`sorted` AS `sorted`,
+		`${alias}`.`modify_date` AS `modifyDate`,
+		`${alias}`.`name` AS `name`,
+		`${alias}`.`logo` AS `logo`,
+		`${alias}`.`remark` AS `remark`,
+		`${alias}`.`create_user` AS `createUser`,
+		`${alias}`.`frend_link_id` AS `frendLinkId`,
+		`${alias}`.`url` AS `url`,
+		`${alias}`.`create_date` AS `createDate`,
+		`${alias}`.`status` AS `status`
+	</sql>
+	
+	<sql id="BASE_SELECT">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_friendlink` AS `t`
+		<where>
+			<if test="sorted != null">AND t.`sorted` = #{sorted}</if>
+			<if test="modifyDate != null">AND t.`modify_date` = #{modifyDate}</if>
+			<if test="name != null">AND t.`name` = #{name}</if>
+			<if test="logo != null">AND t.`logo` = #{logo}</if>
+			<if test="remark != null">AND t.`remark` = #{remark}</if>
+			<if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+			<if test="frendLinkId != null">AND t.`frend_link_id` = #{frendLinkId}</if>
+			<if test="url != null">AND t.`url` = #{url}</if>
+			<if test="createDate != null">AND t.`create_date` = #{createDate}</if>
+			<if test="status != null">AND t.`status` = #{status}</if>
+		</where>	
+	</sql>
+	
+	<select id="queryByPrimaryKey" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.FriendLinkEntity">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_friendlink` AS `t`
+		WHERE
+			t.`frend_link_id` = #{frendLinkId}
+	</select>
+	
+	<select id="queryByParamSelective" parameterType="io.javaweb.community.entity.FriendLinkEntity" resultType="io.javaweb.community.entity.FriendLinkEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<select id="queryByParamSelectiveSole" parameterType="io.javaweb.community.entity.FriendLinkEntity" resultType="io.javaweb.community.entity.FriendLinkEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<insert id="create" parameterType="io.javaweb.community.entity.FriendLinkEntity" >
+		INSERT INTO 
+			`jw_friendlink`
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="sorted != null">`sorted`,</if>
+			<if test="modifyDate != null">`modify_date`,</if>
+			<if test="name != null">`name`,</if>
+			<if test="logo != null">`logo`,</if>
+			<if test="remark != null">`remark`,</if>
+			<if test="createUser != null">`create_user`,</if>
+			<if test="frendLinkId != null">`frend_link_id`,</if>
+			<if test="url != null">`url`,</if>
+			<if test="createDate != null">`create_date`,</if>
+			<if test="status != null">`status`,</if>
+		</trim>
+		<trim prefix=" VALUES(" suffix=")" suffixOverrides=",">
+			<if test="sorted != null">#{sorted},</if>
+			<if test="modifyDate != null">#{modifyDate},</if>
+			<if test="name != null">#{name},</if>
+			<if test="logo != null">#{logo},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="createUser != null">#{createUser},</if>
+			<if test="frendLinkId != null">#{frendLinkId},</if>
+			<if test="url != null">#{url},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="status != null">#{status},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="io.javaweb.community.entity.FriendLinkEntity">
+		UPDATE `jw_friendlink`
+		<set>
+			<if test="sorted != null">`sorted` = #{sorted},</if>
+			<if test="modifyDate != null">`modify_date` = #{modifyDate},</if>
+			<if test="name != null">`name` = #{name},</if>
+			<if test="logo != null">`logo` = #{logo},</if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="createUser != null">`create_user` = #{createUser},</if>
+			<if test="url != null">`url` = #{url},</if>
+			<if test="createDate != null">`create_date` = #{createDate},</if>
+			<if test="status != null">`status` = #{status},</if>
+		</set>
+		WHERE
+			`frend_link_id` = #{frendLinkId}
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="io.javaweb.community.entity.FriendLinkEntity">
+		UPDATE 
+			`jw_friendlink`
+		SET
+			`sorted` = #{sorted},
+			`modify_date` = #{modifyDate},
+			`name` = #{name},
+			`logo` = #{logo},
+			`remark` = #{remark},
+			`create_user` = #{createUser},
+			`url` = #{url},
+			`create_date` = #{createDate},
+			`status` = #{status}
+		WHERE
+			`frend_link_id` = #{frendLinkId}
+	</update>
+	
+	<delete id="deleteByPrimaryKey"  parameterType="java.io.Serializable">
+		DELETE FROM `jw_friendlink` WHERE `frend_link_id` = #{frendLinkId}
+	</delete>
+	
+	<delete id="deleteByParamSelective" parameterType="io.javaweb.community.entity.FriendLinkEntity">
+		DELETE FROM `jw_friendlink`
+		<where>
+			<if test="sorted != null">AND `sorted` = #{sorted}</if>
+			<if test="modifyDate != null">AND `modify_date` = #{modifyDate}</if>
+			<if test="name != null">AND `name` = #{name}</if>
+			<if test="logo != null">AND `logo` = #{logo}</if>
+			<if test="remark != null">AND `remark` = #{remark}</if>
+			<if test="createUser != null">AND `create_user` = #{createUser}</if>
+			<if test="frendLinkId != null">AND `frend_link_id` = #{frendLinkId}</if>
+			<if test="url != null">AND `url` = #{url}</if>
+			<if test="createDate != null">AND `create_date` = #{createDate}</if>
+			<if test="status != null">AND `status` = #{status}</if>
+		</where>
+	</delete>
+</mapper>

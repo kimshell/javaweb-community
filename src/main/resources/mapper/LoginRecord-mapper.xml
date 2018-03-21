@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.LoginRecordMapper">
+
+	<sql id="BASE_FIELD">
+		`${alias}`.`record_id` AS `recordId`,
+		`${alias}`.`sorted` AS `sorted`,
+		`${alias}`.`address` AS `address`,
+		`${alias}`.`modify_date` AS `modifyDate`,
+		`${alias}`.`ip` AS `ip`,
+		`${alias}`.`remark` AS `remark`,
+		`${alias}`.`create_user` AS `createUser`,
+		`${alias}`.`user_agent` AS `userAgent`,
+		`${alias}`.`user_id` AS `userId`,
+		`${alias}`.`operator` AS `operator`,
+		`${alias}`.`create_date` AS `createDate`,
+		`${alias}`.`status` AS `status`
+	</sql>
+	
+	<sql id="BASE_SELECT">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_login_record` AS `t`
+		<where>
+			<if test="recordId != null">AND t.`record_id` = #{recordId}</if>
+			<if test="sorted != null">AND t.`sorted` = #{sorted}</if>
+			<if test="address != null">AND t.`address` = #{address}</if>
+			<if test="modifyDate != null">AND t.`modify_date` = #{modifyDate}</if>
+			<if test="ip != null">AND t.`ip` = #{ip}</if>
+			<if test="remark != null">AND t.`remark` = #{remark}</if>
+			<if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+			<if test="userAgent != null">AND t.`user_agent` = #{userAgent}</if>
+			<if test="userId != null">AND t.`user_id` = #{userId}</if>
+			<if test="operator != null">AND t.`operator` = #{operator}</if>
+			<if test="createDate != null">AND t.`create_date` = #{createDate}</if>
+			<if test="status != null">AND t.`status` = #{status}</if>
+		</where>	
+	</sql>
+	
+	<select id="queryByPrimaryKey" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.LoginRecordEntity">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_login_record` AS `t`
+		WHERE
+			t.`record_id` = #{recordId}
+	</select>
+	
+	<select id="queryByParamSelective" parameterType="io.javaweb.community.entity.LoginRecordEntity" resultType="io.javaweb.community.entity.LoginRecordEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<select id="queryByParamSelectiveSole" parameterType="io.javaweb.community.entity.LoginRecordEntity" resultType="io.javaweb.community.entity.LoginRecordEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<insert id="create" parameterType="io.javaweb.community.entity.LoginRecordEntity" >
+		INSERT INTO 
+			`jw_login_record`
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="recordId != null">`record_id`,</if>
+			<if test="sorted != null">`sorted`,</if>
+			<if test="address != null">`address`,</if>
+			<if test="modifyDate != null">`modify_date`,</if>
+			<if test="ip != null">`ip`,</if>
+			<if test="remark != null">`remark`,</if>
+			<if test="createUser != null">`create_user`,</if>
+			<if test="userAgent != null">`user_agent`,</if>
+			<if test="userId != null">`user_id`,</if>
+			<if test="operator != null">`operator`,</if>
+			<if test="createDate != null">`create_date`,</if>
+			<if test="status != null">`status`,</if>
+		</trim>
+		<trim prefix=" VALUES(" suffix=")" suffixOverrides=",">
+			<if test="recordId != null">#{recordId},</if>
+			<if test="sorted != null">#{sorted},</if>
+			<if test="address != null">#{address},</if>
+			<if test="modifyDate != null">#{modifyDate},</if>
+			<if test="ip != null">#{ip},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="createUser != null">#{createUser},</if>
+			<if test="userAgent != null">#{userAgent},</if>
+			<if test="userId != null">#{userId},</if>
+			<if test="operator != null">#{operator},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="status != null">#{status},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="io.javaweb.community.entity.LoginRecordEntity">
+		UPDATE `jw_login_record`
+		<set>
+			<if test="sorted != null">`sorted` = #{sorted},</if>
+			<if test="address != null">`address` = #{address},</if>
+			<if test="modifyDate != null">`modify_date` = #{modifyDate},</if>
+			<if test="ip != null">`ip` = #{ip},</if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="createUser != null">`create_user` = #{createUser},</if>
+			<if test="userAgent != null">`user_agent` = #{userAgent},</if>
+			<if test="userId != null">`user_id` = #{userId},</if>
+			<if test="operator != null">`operator` = #{operator},</if>
+			<if test="createDate != null">`create_date` = #{createDate},</if>
+			<if test="status != null">`status` = #{status},</if>
+		</set>
+		WHERE
+			`record_id` = #{recordId}
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="io.javaweb.community.entity.LoginRecordEntity">
+		UPDATE 
+			`jw_login_record`
+		SET
+			`sorted` = #{sorted},
+			`address` = #{address},
+			`modify_date` = #{modifyDate},
+			`ip` = #{ip},
+			`remark` = #{remark},
+			`create_user` = #{createUser},
+			`user_agent` = #{userAgent},
+			`user_id` = #{userId},
+			`operator` = #{operator},
+			`create_date` = #{createDate},
+			`status` = #{status}
+		WHERE
+			`record_id` = #{recordId}
+	</update>
+	
+	<delete id="deleteByPrimaryKey"  parameterType="java.io.Serializable">
+		DELETE FROM `jw_login_record` WHERE `record_id` = #{recordId}
+	</delete>
+	
+	<delete id="deleteByParamSelective" parameterType="io.javaweb.community.entity.LoginRecordEntity">
+		DELETE FROM `jw_login_record`
+		<where>
+			<if test="recordId != null">AND `record_id` = #{recordId}</if>
+			<if test="sorted != null">AND `sorted` = #{sorted}</if>
+			<if test="address != null">AND `address` = #{address}</if>
+			<if test="modifyDate != null">AND `modify_date` = #{modifyDate}</if>
+			<if test="ip != null">AND `ip` = #{ip}</if>
+			<if test="remark != null">AND `remark` = #{remark}</if>
+			<if test="createUser != null">AND `create_user` = #{createUser}</if>
+			<if test="userAgent != null">AND `user_agent` = #{userAgent}</if>
+			<if test="userId != null">AND `user_id` = #{userId}</if>
+			<if test="operator != null">AND `operator` = #{operator}</if>
+			<if test="createDate != null">AND `create_date` = #{createDate}</if>
+			<if test="status != null">AND `status` = #{status}</if>
+		</where>
+	</delete>
+</mapper>

@@ -1,0 +1,212 @@
+a:hover {
+  text-decoration: none;
+}
+/**ul {
+  list-style: none;
+}**/
+.replies-content {
+  margin: 0;
+  padding: 0;
+}
+.bg009688 {
+  background-color: #009688 !important;
+}
+.bg000 {
+  background-color: #000 !important;
+}
+/** 2018年1月27日 15:36:00 **/
+.bgf0ad4e{
+	background-color: #f0ad4e !important;	
+}
+.bgd9534f{
+	background-color: #d9534f !important;
+}
+.bg337ab7{
+	background-color: #337ab7 !important;
+}
+
+
+.discuss{	
+  	background-color: #337ab7 !important;
+ }
+.help {	
+    background-color: #5cb85c !important;
+}
+.leisure {	
+    background-color: #5bc0de !important;
+}
+.notice {	
+    background-color: #f0ad4e !important;
+}
+.suggest  {	
+    background-color: #d9534f !important;
+}
+
+.detail-replies,
+.detail-container {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 0 1px #e0e0e0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  padding: 20px 15px;
+}
+.detail-container .detail-header .title h3 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 36px;
+}
+.detail-container .detail-header .information {
+  margin-top: 10px;
+  position: relative;
+}
+.detail-container .detail-header .information .tag span {
+  padding: 3px 5px;
+  background-color: #999;
+  color: #fff;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+.detail-container .detail-header .information .right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 14px;
+}
+.detail-container .detail-header .information .right a {
+  margin-right: 5px;
+}
+.detail-container .detail-header .information .right i {
+  margin-right: 3px;
+}
+.detail-container .detail-header .landlord {
+  margin-top: 20px;
+  position: relative;
+  line-height: 20px;
+  padding: 15px 15px;
+  font-size: 13px;
+  background-color: #f8f8f8;
+  color: #999;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.detail-container .detail-header .landlord .name a {
+  color: #01AAED;
+  padding-right: 10px;
+}
+.detail-container .detail-header .landlord .name a:hover {
+  color: #5FB878;
+}
+.detail-container .detail-header .landlord .name span {
+  color: #999999;
+}
+.detail-container .detail-header .landlord .collection {
+  margin-top: 10px;
+}
+.detail-container .detail-header .landlord .collection span {
+  padding-right: 10px;
+  color: #FF7200;
+}
+.detail-container .detail-header .landlord .collection a {
+  padding: 3px 7px;
+  color: #fff;
+  background-color: #009688;
+  font-size: 12px;
+}
+.detail-container .detail-content {
+  margin-top: 20px;
+}
+/**
+.detail-container .detail-content p,
+.detail-container .detail-content h1,
+.detail-container .detail-content h2,
+.detail-container .detail-content h3,
+.detail-container .detail-content h4,
+.detail-container .detail-content h5 {
+  margin: 0;
+  padding: 0;
+}**/
+.detail-replies {
+  margin-top: 30px;
+}
+.detail-replies .replies-title {
+  margin-top: 20px;
+  border-top: 1px solid #e6e6e6;
+  position: relative;
+}
+.detail-replies .replies-title span {
+  background-color: #fff;
+  font-size: 20px;
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  margin-left: -35px;
+  width: 70px;
+  height: 30px;
+  text-align: center;
+}
+.detail-replies .replies-content {
+  margin-top: 15px;
+}
+.detail-replies .replies-content .li {
+  border-bottom: 1px dashed #e0e0e0;
+  padding: 15px 0;
+}
+.detail-replies .replies-content .li .content {
+  color: #333;
+  padding: 15px 0;
+}
+/**
+.detail-replies .replies-content li .content p,
+.detail-replies .replies-content li .content h1,
+.detail-replies .replies-content li .content h2,
+.detail-replies .replies-content li .content h3,
+.detail-replies .replies-content li .content h4,
+.detail-replies .replies-content li .content h5 {
+  margin: 0;
+  padding: 0;
+}**/
+
+.detail-replies .replies-content li .footer {
+  font-size: 16px;
+}
+.detail-replies .replies-content li .footer a {
+  color: #666;
+  margin-right: 10px;
+}
+.detail-replies .replies-content li .footer a.on {
+  color: #c00;
+}
+
+.post-attitud{
+	color: #666;
+}
+.post-attitude.on{
+	 color: #c00;
+}
+
+.detail-replies .replies-content li .footer i {
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+
+
+/***************/
+
+
+.detail-replies .replies-content li .content ol,
+.detail-replies .replies-content li .content ul {
+  padding-left: 40px;
+}
+.detail-container .detail-content ol,
+.detail-container .detail-content ul {
+  margin: 0;
+  padding
+}
+.content ul li{list-style:disc;}
+.content table{width:100%!important;}

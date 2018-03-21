@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include('/common/common_header.html'){}  %>
+        <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+        <title>资料设置</title>
+        <style type="text/css">
+        </style>
+    </head>
+    <body>
+		<% include('/common/common_body_header.html',{active:'none'}){} %>
+		
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2 col-md-offset-1" >
+					<% include('/common/common_user_menu.html',{active:'settings'}){} %>
+				</div>
+				
+				<div class="col-md-8">
+					
+					
+					<ul id="menu-tab" class="nav nav-tabs">
+						<li class="active">
+						    <a href="#data" data-toggle="tab">基本资料</a>
+						</li>
+						<li>
+							<a href="#portrait" data-toggle="tab">头像</a>
+						</li>
+						<li>
+							<a href="#safe" data-toggle="tab">安全</a>
+						</li>
+						<li>
+							<a href="#account" data-toggle="tab">帐号绑定</a>
+						</li>
+					</ul>
+	
+					<div id="myTabContent" class="tab-content">
+					    <div class="tab-pane fade in active" id="data">
+					    
+						    <div style="margin-top: 10px;">
+						    	<form class="form-horizontal" role="form" id="user-info-form">
+									<div class="form-group">
+										<label class="col-sm-2 control-label" style="text-align: left;">账户名称</label>
+										<div class="col-sm-3">
+											<p class="form-control-static">${user.name}</p>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="email" class="col-sm-2 control-label" style="text-align: left;">账户邮箱</label>
+										<div class="col-sm-3">
+											<input type="text" class="form-control" id="email" name="email" value="${user.email}">
+										</div>
+										<%if(user.emailVerifi){%>
+											<span class="help-block">更换邮箱,需要重新进行验证</span>
+										<%}else{%>
+											<span class="help-block" style="color: red">邮箱未验证,<a target="_blank" href="${ctxPath}/activation/send">点击发送验证邮件</a></span>
+										<%}%>
+									</div>
+									<div class="form-group">
+										<label for="site" class="col-sm-2 control-label" style="text-align: left;">个人站点</label>
+										<div class="col-sm-3">
+											<input type="text" class="form-control" id="site" name="site" value="${user.site}">
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="github" class="col-sm-2 control-label" style="text-align: left;">github　</label>
+										<div class="col-sm-3">
+											<input type="text" class="form-control" id="github" name="github" value="${user.github}">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label" style="text-align: left;">隐私设置</label>
+										<div class="col-sm-3">
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="loginRadio" value="true" ${nvl(user.loginRadio,false)?'checked="checked"'}>广播登录消息
+												</label>
+												<label>
+													<input type="checkbox" name="browseRadio" value="true" ${nvl(user.browseRadio,false)?'checked="checked"'}>广播阅读消息
+												</label>
+												<label>
+													<input type="checkbox" name="replyRadio" value="true" ${nvl(user.replyRadio,false)?'checked="checked"'}>广播回复消息
+												</label>
+											</div>
+										</div>
+									</div>
+								
+									<div class="form-group">
+										<label for="personality" class="col-sm-2 control-label" style="text-align: left;">个性签名</label>
+										<div class="col-sm-3">
+											<textarea class="form-control" id="personality" name="personality" rows="3" placeholder="" style="resize: none;">${user.personality}</textarea>
+										</div>
+									</div>
+								</form>
+						    </div>
+						    <div>
+						    	<button id="update-info-button" class="btn btn-success" style="width: 100px;">修改</button>
+						    </div>
+					    	
+					    	
+					    </div>
+					    <div class="tab-pane fade" id="portrait">
+					       	<div style="margin-top: 10px;">
+					       		<img src="${user.portrait}" class="img-thumbnail user-portrait-img" width="200px;" height="200px;" onerror="this.src = '${ctxPath}/static/icon/green_200.png'">
+					       	</div>
+					       	<div class="hide">
+					       		<form>
+					       			<input type="file" accept="image/*" id="user-portrait-input" onchange="fileChose(this);"/>
+					       		</form>
+					       	</div>
+					       	<div style="margin-top: 10px;">
+						    	<button id="update-portrait-button" class="btn btn-success" style="width: 100px;">选择头像</button>
+						    </div>
+					    </div>
+					    <div class="tab-pane fade" id="safe">
+					    	
+					    	
+					    	<div style="margin-top: 10px;">
+						    	<form class="form-horizontal" role="form" id="user-pass-form">
+						    		<input type="hidden" name="codeKey" id="codeKey"/>
+									<div class="form-group">
+										<label for="oldPass" class="col-sm-2 control-label" style="text-align: left;">账户旧密码 </label>
+										<div class="col-sm-3">
+											<input type="password" class="form-control" id="oldPass" name="oldPass" placeholder="旧密码" >
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="newPass" class="col-sm-2 control-label" style="text-align: left;">账户新密码 </label>
+										<div class="col-sm-3">
+											<input type="password" class="form-control" id="newPass" name="newPass" placeholder="新密码">
+										</div>
+									</div>
+									
+									<div id="code-input" class="form-group hide">
+										<div class="col-sm-2">
+											<input type="text" class="form-control" id="code" name="verifyCode" placeholder="人类验证">
+										</div>
+										<img id="verifyCode" alt="" width="70px;" height="35px;" style="cursor: pointer;">
+									</div>
+								</form>
+						    </div>
+						    <div>
+						    	<button id="update-pass-button" class="btn btn-success" style="width: 100px;">修改</button>
+						    </div>
+					    	
+					    </div>
+					    <div class="tab-pane fade" id="account">
+					    	<div style="margin-top: 10px;">
+					       		第三方社交账户绑定 (暂未开放....)
+					       	</div>
+					    </div>
+					</div>
+										
+				</div>
+			</div>
+		</div>
+		
+		
+		<% include('/common/common_footer.html',{}){} %>
+    </body>
+	<% include('/common/common_script.html',{}){} %>
+    <script>
+	    $(function () {
+	    	
+	    	$('#verifyCode').click(function(){
+				$('#codeKey').val('');
+				$.ajax({
+					url:'${ctxPath}/verifyCode',
+					success:function(response){
+						if(response.success){
+							$('#verifyCode').attr({'src':response.data.code})
+							$('#codeKey').val(response.data.cokeKey);
+							$("input[name='verifyCode']").val('');
+						}
+					}
+				});
+			});
+	    	
+	    	$('#update-info-button').click(function(){
+	    		var formData = $('#user-info-form').serializeArray();
+	    		for(var i = 0 ; i < formData.length ; i++){
+	    			var item = formData[i];
+	    			if(item.name == 'email'){
+	    				if(!new RegExp("^[0-9a-zA-Z][-_0-9a-zA-Z\\.]{2,20}[0-9a-zA-Z]@([A-Za-z0-9][-A-Za-z0-9]+\\.)+[A-Za-z]{2,14}$").test(item.value)){
+	        				layer.msg('该邮箱格式不支持');
+	        				return;
+	        			}
+	    			}else if(item.name == 'personality'){
+	    				if(item.value.length > 255){
+	    					layer.msg('个性签名,最多255字符');
+	    					return;
+	    				}
+	    			}else if(item.name == 'github'){
+	    				if(item.value.length > 50){
+	    					layer.msg('github地址,最多50字符');
+	    					return;
+	    				}
+	    			}else if(item.name == 'site'){
+	    				if(item.value.length > 50){
+	    					layer.msg('个人站点,最多50字符');
+	    					return;
+	    				}
+	    			}
+	    		}
+	    		layer.load(2);
+	    		$.ajax({
+	    			url:'${ctxPath}/user/updateInfo',
+	    			data:formData,
+	    			method:'POST',
+	    			success:function(response){
+	    				if(response.success){
+	    					window.location.reload();
+	    				}else{
+	    					layer.closeAll();
+	    					layer.msg(response.message);
+	    				}
+	    			}
+	    		});
+	    	});
+	    	
+	    	$('#update-pass-button').click(function(){
+	    		var formData = $('#user-pass-form').serializeArray();
+	    		for(var i = 0 ; i < formData.length; i++){
+	    			if(formData[i].name == 'oldPass' || formData[i].name == 'newPass'){
+	    				if(!new RegExp("^[^\\u4e00-\\u9fa5\\s]{6,16}$").test(formData[i].value)){
+							layer.msg('密码格式不正确,不能有汉字或者空格 6 - 16位');
+							return;
+		    			}
+	    			}
+	    		}
+	    		layer.load(2);
+	    		$.ajax({
+	    			url:'${ctxPath}/user/updatePass',
+	    			method:'POST',
+	    			data:formData,
+	    			success:function(response){
+	    				layer.closeAll();
+	    				if(response.success){
+	    					$('#user-pass-form')[0].reset();
+	    					$('#code-input').addClass('hide');
+	    				}else{
+    						if(response.status == 'MISSING_VERIFY_CODE'){
+    							$('#code-input').removeClass('hide');
+    							$('#verifyCode').click();
+    						}else{
+    							if(!$('#code-input').hasClass('hide')){
+    								$('#verifyCode').click();
+    							}
+    						}
+	    				}
+	    				layer.msg(response.status == 'MISSING_VERIFY_CODE' ? '请输入验证码' : response.message);
+	    			},
+	    			complete:function(){
+						$('#codeKey').val('');
+						$("input[name='verifyCode']").val('');
+	    			}
+	    		});
+	    	});
+	    	$('#update-portrait-button').click(function(){
+	    		$('#user-portrait-input').click();
+	    	});
+	    })
+	    function fileChose(node){
+	    	if(!node.files[0]){
+	    		return;
+	    	}
+	    	var file = node.files[0];
+	    	if(file.size > (1024 * 1024) * 10){
+	    		layer.msg('图片大小不能超过10MB');
+		    	return;
+	    	}
+	    	layer.load(2);
+	    	var formData = new FormData();
+	    	formData.append("files",file);
+	    	$.ajax({
+				url : '${ctxPath}/upload',
+				type : 'POST',
+				data : formData,
+				processData : false,
+				contentType : false,
+				success : function(response) {
+					if(response.success){
+						$.ajax({
+							url:'${ctxPath}/user/updatePortrait',
+							data:'portrait=' + response.data,
+							method:'POST',
+							success:function(rep){
+								layer.closeAll();
+								layer.msg(rep.message);
+								if(rep.success){
+									$('.user-portrait-img').attr({'src':response.data})
+								}
+							}
+						});
+					}else{
+						layer.closeAll();
+						if(response.status == 'MISSING_VERIFY_CODE' || response.status == 'VERIFY_CODE_FAIL'){
+	            			response.message = '行为异常,限定时间内图片上传数量超过限制,请联系管理员';
+	            		}
+						layer.alert(response.message, {
+    						skin: 'layui-layer-lan',
+    						closeBtn: 0
+            			});
+					}
+				},
+			});
+	    }
+    </script>
+</html>

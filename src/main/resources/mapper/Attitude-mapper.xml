@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.AttitudeMapper">
+
+	<sql id="BASE_FIELD">
+		`${alias}`.`sorted` AS `sorted`,
+		`${alias}`.`modify_date` AS `modifyDate`,
+		`${alias}`.`target_id` AS `targetId`,
+		`${alias}`.`remark` AS `remark`,
+		`${alias}`.`create_user` AS `createUser`,
+		`${alias}`.`attitude_id` AS `attitudeId`,
+		`${alias}`.`type` AS `type`,
+		`${alias}`.`create_date` AS `createDate`,
+		`${alias}`.`status` AS `status`,
+		`${alias}`.`target` AS `target`
+	</sql>
+	
+	<sql id="BASE_SELECT">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_attitude` AS `t`
+		<where>
+			<if test="sorted != null">AND t.`sorted` = #{sorted}</if>
+			<if test="modifyDate != null">AND t.`modify_date` = #{modifyDate}</if>
+			<if test="targetId != null">AND t.`target_id` = #{targetId}</if>
+			<if test="remark != null">AND t.`remark` = #{remark}</if>
+			<if test="createUser != null">AND t.`create_user` = #{createUser}</if>
+			<if test="attitudeId != null">AND t.`attitude_id` = #{attitudeId}</if>
+			<if test="type != null">AND t.`type` = #{type}</if>
+			<if test="createDate != null">AND t.`create_date` = #{createDate}</if>
+			<if test="status != null">AND t.`status` = #{status}</if>
+			<if test="target != null">AND t.`target` = #{target}</if>
+		</where>	
+	</sql>
+	
+	<select id="queryByPrimaryKey" parameterType="java.io.Serializable" resultType="io.javaweb.community.entity.AttitudeEntity">
+		SELECT
+			<include refid="BASE_FIELD">
+				<property name="alias" value="t"/>
+			</include>
+		FROM
+			`jw_attitude` AS `t`
+		WHERE
+			t.`attitude_id` = #{attitudeId}
+	</select>
+	
+	<select id="queryByParamSelective" parameterType="io.javaweb.community.entity.AttitudeEntity" resultType="io.javaweb.community.entity.AttitudeEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<select id="queryByParamSelectiveSole" parameterType="io.javaweb.community.entity.AttitudeEntity" resultType="io.javaweb.community.entity.AttitudeEntity">
+		<include refid="BASE_SELECT"/>
+	</select>
+	
+	<insert id="create" parameterType="io.javaweb.community.entity.AttitudeEntity" >
+		INSERT INTO 
+			`jw_attitude`
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="sorted != null">`sorted`,</if>
+			<if test="modifyDate != null">`modify_date`,</if>
+			<if test="targetId != null">`target_id`,</if>
+			<if test="remark != null">`remark`,</if>
+			<if test="createUser != null">`create_user`,</if>
+			<if test="attitudeId != null">`attitude_id`,</if>
+			<if test="type != null">`type`,</if>
+			<if test="createDate != null">`create_date`,</if>
+			<if test="status != null">`status`,</if>
+			<if test="target != null">`target`,</if>
+		</trim>
+		<trim prefix=" VALUES(" suffix=")" suffixOverrides=",">
+			<if test="sorted != null">#{sorted},</if>
+			<if test="modifyDate != null">#{modifyDate},</if>
+			<if test="targetId != null">#{targetId},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="createUser != null">#{createUser},</if>
+			<if test="attitudeId != null">#{attitudeId},</if>
+			<if test="type != null">#{type},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="status != null">#{status},</if>
+			<if test="target != null">#{target},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="io.javaweb.community.entity.AttitudeEntity">
+		UPDATE `jw_attitude`
+		<set>
+			<if test="sorted != null">`sorted` = #{sorted},</if>
+			<if test="modifyDate != null">`modify_date` = #{modifyDate},</if>
+			<if test="targetId != null">`target_id` = #{targetId},</if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="createUser != null">`create_user` = #{createUser},</if>
+			<if test="type != null">`type` = #{type},</if>
+			<if test="createDate != null">`create_date` = #{createDate},</if>
+			<if test="status != null">`status` = #{status},</if>
+			<if test="target != null">`target` = #{target},</if>
+		</set>
+		WHERE
+			`attitude_id` = #{attitudeId}
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="io.javaweb.community.entity.AttitudeEntity">
+		UPDATE 
+			`jw_attitude`
+		SET
+			`sorted` = #{sorted},
+			`modify_date` = #{modifyDate},
+			`target_id` = #{targetId},
+			`remark` = #{remark},
+			`create_user` = #{createUser},
+			`type` = #{type},
+			`create_date` = #{createDate},
+			`status` = #{status},
+			`target` = #{target}
+		WHERE
+			`attitude_id` = #{attitudeId}
+	</update>
+	
+	<delete id="deleteByPrimaryKey"  parameterType="java.io.Serializable">
+		DELETE FROM `jw_attitude` WHERE `attitude_id` = #{attitudeId}
+	</delete>
+	
+	<delete id="deleteByParamSelective" parameterType="io.javaweb.community.entity.AttitudeEntity">
+		DELETE FROM `jw_attitude`
+		<where>
+			<if test="sorted != null">AND `sorted` = #{sorted}</if>
+			<if test="modifyDate != null">AND `modify_date` = #{modifyDate}</if>
+			<if test="targetId != null">AND `target_id` = #{targetId}</if>
+			<if test="remark != null">AND `remark` = #{remark}</if>
+			<if test="createUser != null">AND `create_user` = #{createUser}</if>
+			<if test="attitudeId != null">AND `attitude_id` = #{attitudeId}</if>
+			<if test="type != null">AND `type` = #{type}</if>
+			<if test="createDate != null">AND `create_date` = #{createDate}</if>
+			<if test="status != null">AND `status` = #{status}</if>
+			<if test="target != null">AND `target` = #{target}</if>
+		</where>
+	</delete>
+</mapper>

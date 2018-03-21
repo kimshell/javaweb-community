@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+		
+ -->
+<mapper namespace="io.javaweb.community.mapper.AttitudeMapper">
+
+	<select id="queryCount" resultType="java.lang.Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			`jw_attitude` t
+		WHERE
+			t.`target_id` = #{targetId}
+		AND
+			t.`target` = #{target}
+		AND
+			t.`type` = #{type}
+	</select>
+</mapper>
